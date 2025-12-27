@@ -6,7 +6,7 @@ export async function up(knex: Knex): Promise<void> {
       table.increments('id').primary();
       table.string('name').notNullable().unique();
       table.string('slug').notNullable().unique();
-      table.string('color', 7); // hex color
+      table.string('color', 7);
       table.timestamps(true, true);
     })
     .createTable('post_tags', (table) => {

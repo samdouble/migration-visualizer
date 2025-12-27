@@ -1,31 +1,41 @@
 {
   "name": "migration-visualizer",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "A migration visualizer for Knex.js",
   "main": "index.js",
   "author": "samdouble",
   "scripts": {
+    "build": "tsup",
+    "lint": "eslint .",
     "migrate": "knex migrate:latest",
     "migrate:list": "knex migrate:list",
     "migrate:make": "knex migrate:make -x ts",
     "migrate:rollback": "knex migrate:rollback",
     "migrate:status": "knex migrate:status",
     "migrate:up": "knex migrate:up",
-    "migrate:down": "knex migrate:down"
+    "migrate:down": "knex migrate:down",
+    "schema": "ts-node src/index.ts",
+    "test": "jest"
   },
   "keywords": [
     "knex",
     "migrations",
+    "mysql",
     "sqlite"
   ],
-  "license": "MIT",
   "dependencies": {
     "better-sqlite3": "^12.5.0",
     "knex": "^3.1.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.2",
     "@types/better-sqlite3": "^7.6.12",
+    "eslint": "^9.39.2",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
-    "typescript": "^5.7.2"
+    "tsup": "^8.5.1",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.50.1"
   }
 }

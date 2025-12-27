@@ -1,4 +1,4 @@
-name: Migrations
+name: Run migrations
 
 on:
   push:
@@ -14,18 +14,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: npm
-
       - name: Install dependencies
         run: npm ci
-
       - name: Run migrations
         run: npm run migrate
-
       - name: Check migration status
         run: npm run migrate:status
+      - name: Print table schemas
+        run: npm run schema

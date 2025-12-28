@@ -19,11 +19,13 @@
   },
   "keywords": [
     "knex",
+    "mermaid",
     "migrations",
     "mysql",
     "sqlite"
   ],
   "dependencies": {
+    "dedent": "^1.7.1",
     "knex": "^3.1.0"
   },
   "devDependencies": {

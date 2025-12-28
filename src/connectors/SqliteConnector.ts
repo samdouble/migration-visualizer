@@ -1,6 +1,6 @@
-import { Knex } from "knex";
-import { IConnector } from "./IConnector";
-import { Column, Ddl, SqliteTable, Table } from "./types";
+import { Knex } from 'knex';
+import { IConnector } from './IConnector';
+import { Column, Ddl, SqliteTable, Table } from './types';
 
 export class SqliteConnector implements IConnector {
   constructor(private readonly db: Knex) {

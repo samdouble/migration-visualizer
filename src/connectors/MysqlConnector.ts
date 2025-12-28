@@ -1,6 +1,6 @@
-import { Knex } from "knex";
-import { IConnector } from "./IConnector";
-import { Column, Ddl, MysqlColumn, MysqlTable, Table } from "./types";
+import { Knex } from 'knex';
+import { IConnector } from './IConnector';
+import { Column, Ddl, MysqlColumn, MysqlTable, Table } from './types';
 
 export class MysqlConnector implements IConnector {
   constructor(private readonly db: Knex) {

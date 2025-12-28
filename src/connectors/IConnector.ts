@@ -1,4 +1,4 @@
-import { Column, Ddl, Table } from "./types";
+import { Column, Ddl, Table } from './types';
 
 export interface IConnector {
   getColumns: (tableName: string) => Promise<Column[]>;

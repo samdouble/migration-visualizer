@@ -1,0 +1,27 @@
+import knex from 'knex';
+import { SqliteConnector } from '../src/SqliteConnector';
+import { runConnectorTests } from './connectorTests';
+
+runConnectorTests(
+  'SQLite',
+  async () => {
+    const knexDb = knex({
+      client: 'better-sqlite3',
+      connection: {
+        filename: ':memory:',
+      },
+      useNullAsDefault: true,
+      migrations: {
+        directory: './tests/fixtures/migrations',
+        extension: 'ts',
+      },
+    });
+
+    await knexDb.migrate.latest();
+    const connector = new SqliteConnector(knexDb);
+    return { db: knexDb, connector };
+  },
+  async (knexDb) => {
+    await knexDb.destroy();
+  }
+);

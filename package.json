@@ -15,7 +15,7 @@
     "migrate:up": "knex migrate:up",
     "migrate:down": "knex migrate:down",
     "schema": "ts-node src/index.ts",
-    "test": "jest"
+    "test": "jest --runInBand --testTimeout=20000"
   },
   "keywords": [
     "knex",
@@ -24,14 +24,17 @@
     "sqlite"
   ],
   "dependencies": {
-    "better-sqlite3": "^12.5.0",
     "knex": "^3.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
     "@types/better-sqlite3": "^7.6.12",
+    "@types/jest": "^30.0.0",
+    "better-sqlite3": "^12.5.0",
     "eslint": "^9.39.2",
     "jest": "^30.2.0",
+    "mysql-memory-server": "^1.13.0",
+    "mysql2": "^3.16.0",
     "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
     "tsup": "^8.5.1",

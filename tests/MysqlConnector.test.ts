@@ -1,6 +1,6 @@
 import knex from 'knex';
 import { MySQLDB } from 'mysql-memory-server/dist/types';
-import { MysqlConnector } from '../src/MysqlConnector';
+import { MysqlConnector } from '../src/connectors/MysqlConnector';
 import { runConnectorTests } from './connectorTests';
 import { dbConnect, dbDisconnect } from './mysql';
 

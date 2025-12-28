@@ -1,5 +1,5 @@
 import { Knex } from 'knex';
-import { IConnector } from '../src/IConnector';
+import { IConnector } from '../src/connectors/IConnector';
 
 export function runConnectorTests(
   name: string,

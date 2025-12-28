@@ -35,3 +35,11 @@ jobs:
       - name: Build
         run: |
           npm run build
+      - name: Test CLI
+        run: |
+          node dist/cli.js --help
+          node dist/cli.js --version
+
+          npm link
+          migration-visualizer --help
+          migration-visualizer --version

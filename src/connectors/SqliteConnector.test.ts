@@ -1,6 +1,6 @@
 import knex from 'knex';
-import { SqliteConnector } from '../src/connectors/SqliteConnector';
-import { runConnectorTests } from './connectorTests';
+import { runConnectorTests } from '../../tests/connectorTests';
+import { SqliteConnector } from './SqliteConnector';
 
 runConnectorTests(
   'SQLite',

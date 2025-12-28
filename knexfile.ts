@@ -7,7 +7,7 @@ const config: Knex.Config = {
   },
   useNullAsDefault: true,
   migrations: {
-    directory: './migrations',
+    directory: './tests/fixtures/migrations',
     extension: 'ts',
   },
 };

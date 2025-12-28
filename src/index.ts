@@ -1,12 +1,13 @@
 import knex from 'knex';
 import config from '../knexfile';
-import { getTables, getColumnsInfo, getDdl } from '../src/sqlite';
+import { SqliteConnector } from './SqliteConnector';
 
 async function printSchema() {
   const db = knex(config);
 
   try {
-    const tables = await getTables(db);
+    const connector = new SqliteConnector(db);
+    const tables = await connector.getTables();
 
     console.log('=== Tables in database ===');
     console.log(tables.map((t: { name: string }) => t.name).join(', '));
@@ -16,7 +17,7 @@ async function printSchema() {
     for (const { name: tableName } of tables) {
       console.log(`--- ${tableName} ---`);
       
-      const columns = await getColumnsInfo(db, tableName);
+      const columns = await connector.getColumns(tableName);
       
       console.log(
         'cid'.padEnd(4) +
@@ -42,7 +43,7 @@ async function printSchema() {
 
     console.log('=== Full table schemas ===');
     for (const { name: tableName } of tables) {
-      const schema = await getDdl(db, tableName);
+      const schema = await connector.getDdl(tableName);
       console.log(`--- ${tableName} ---`);
       console.log(schema[0]?.sql || 'No schema found');
       console.log('');

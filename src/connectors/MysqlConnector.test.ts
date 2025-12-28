@@ -1,8 +1,8 @@
 import knex from 'knex';
 import { MySQLDB } from 'mysql-memory-server/dist/types';
-import { MysqlConnector } from '../src/connectors/MysqlConnector';
-import { runConnectorTests } from './connectorTests';
-import { dbConnect, dbDisconnect } from './mysql';
+import { runConnectorTests } from '../../tests/connectorTests';
+import { dbConnect, dbDisconnect } from '../../tests/mysql';
+import { MysqlConnector } from './MysqlConnector';
 
 let db: MySQLDB;
 

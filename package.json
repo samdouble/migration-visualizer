@@ -2,7 +2,12 @@
   "name": "migration-visualizer",
   "version": "0.1.0",
   "description": "A migration visualizer for Knex.js",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "migration-visualizer": "dist/cli.js"
+  },
   "author": "samdouble",
   "scripts": {
     "build": "tsup",

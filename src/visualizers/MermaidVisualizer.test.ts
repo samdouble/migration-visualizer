@@ -1,5 +1,5 @@
-import { Column, Table } from '../src/connectors/types';
-import { MermaidVisualizer } from '../src/visualizers/MermaidVisualizer';
+import { Column, Table } from '../connectors/types';
+import { MermaidVisualizer } from '../visualizers/MermaidVisualizer';
 
 describe('MermaidVisualizer', () => {
   const visualizer = new MermaidVisualizer();

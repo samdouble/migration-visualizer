@@ -1,24 +1,49 @@
 import dedent from 'dedent';
-import { Column, Table } from '../connectors/types';
+import { Column, ForeignKey, Table } from '../connectors/types';
 import { IVisualizer } from './IVisualizer';
 
+const indent = (text: string, nbSpaces: number): string => {
+  const padding = ' '.repeat(nbSpaces);
+  return text.split('\n').map(line => padding + line).join('\n');
+};
+
 export class MermaidVisualizer implements IVisualizer {
-  async visualize(tables: Table[], columns: Column[]): Promise<string> {
+  static renderColumn(column: Column): string {
+    return `${column.type} ${column.name} ${column.pk ? 'PK' : ''}`;
+  }
+
+  static renderReferences(foreignKeys: ForeignKey[]): string {
+    return foreignKeys.map((foreignKey) => {
+      return `${foreignKey.from_table_name} ||--o{ ${foreignKey.to_table_name}: uses`;
+    }).join('\n');
+  }
+
+  static renderTable(table: Table, columns: Column[], foreignKeys: ForeignKey[]): string {
+    return dedent(
+    `
+    ${MermaidVisualizer.renderReferences(foreignKeys)}
+    ${table.name} {
+    ${indent(columns.map((column) => MermaidVisualizer.renderColumn(column)).join('\n'), 8)}
+    }
+    `,
+    );
+  }
+
+  async visualize(tables: Table[], columns: Column[], foreignKeys: ForeignKey[]): Promise<string> {
     const tableDefs = tables.map((table) => {
       const tableColumns = columns.filter((column) => column.table_name === table.name);
-      return (
-        dedent`${table.name} ||--o{ ORDER : places\n` +
-        dedent`${table.name} {\n` +
-        dedent`  ${tableColumns.map((column) => `    ${column.type} ${column.name}`).join('\n')}\n` +
-        dedent`}\n`
-      );
+      const tableForeignKeys = foreignKeys.filter((foreignKey) => foreignKey.from_table_name === table.name);
+      return MermaidVisualizer.renderTable(table, tableColumns, tableForeignKeys);
     });
-    return dedent`
-      ---
-      title: Database Schema
-      ---
-      erDiagram
-        ${tableDefs.join('\n')}
-    `;
+
+    return dedent(
+    `
+    ---
+    title: Database Schema
+    ---
+    erDiagram
+    ${indent(tableDefs.join('\n'), 4)}
+    `,
+    );
   }
 }

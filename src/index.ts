@@ -37,9 +37,12 @@ export const visualize = async (_output: string) => {
   const columns = await Promise.all(
     tables.map(async (table) => connector.getColumns(db, table.name)),
   );
+  const foreignKeys = await Promise.all(
+    tables.map(async (table) => connector.getForeignKeys(db, table.name)),
+  );
 
   db.destroy();
 
   const visualizer = new MermaidVisualizer();
-  return visualizer.visualize(tables, columns.flat());
+  return visualizer.visualize(tables, columns.flat(), foreignKeys.flat());
 };

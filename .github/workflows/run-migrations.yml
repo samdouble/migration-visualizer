@@ -1,8 +1,6 @@
 name: Run migrations
 
-on:
-  push:
-    branches: ["**"]
+on: [pull_request]
 
 jobs:
   migrate:
@@ -27,3 +25,26 @@ jobs:
         run: npm run migrate:status
       - name: Print table schemas
         run: npm run schema
+      - name: Generate visualization
+        id: visualize
+        run: |
+          npm run build
+          DIAGRAM=$(npx migration-visualizer visualize)
+          echo "diagram<<EOF" >> $GITHUB_OUTPUT
+          echo "$DIAGRAM" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+      - name: Add PR comment
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.PAT }}
+          script: |
+            const prNumber = context.issue.number;
+            const diagram = `${{ steps.visualize.outputs.diagram }}`;
+            const message = `## Database Schema\n\n\`\`\`mermaid\n${diagram}\n\`\`\``;
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body: message
+            });

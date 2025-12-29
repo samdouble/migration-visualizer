@@ -1,4 +1,4 @@
-import { Column, Table } from '../connectors/types';
+import { Column, ForeignKey, Table } from '../connectors/types';
 import { MermaidVisualizer } from '../visualizers/MermaidVisualizer';
 
 describe('MermaidVisualizer', () => {
@@ -23,8 +23,13 @@ describe('MermaidVisualizer', () => {
     { cid: 3, name: 'user_id', type: 'INTEGER', notnull: true, dflt_value: '', pk: false, table_name: 'comments' },
   ];
 
+  const foreignKeys: ForeignKey[] = [
+    { id: 1, from_table_name: 'comments', from_column_name: 'post_id', to_table_name: 'posts', to_column_name: 'id', on_delete: 'CASCADE', on_update: 'CASCADE' },
+    { id: 2, from_table_name: 'comments', from_column_name: 'user_id', to_table_name: 'users', to_column_name: 'id', on_delete: 'CASCADE', on_update: 'CASCADE' },
+  ];
+
   it('should generate mermaid diagram', async () => {
-    const result = await visualizer.visualize(tables, columns);
+    const result = await visualizer.visualize(tables, columns, foreignKeys);
 
     expect(result).toMatchSnapshot();
   });

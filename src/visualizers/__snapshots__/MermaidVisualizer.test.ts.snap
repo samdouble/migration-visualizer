@@ -5,25 +5,22 @@ exports[`MermaidVisualizer should generate mermaid diagram 1`] = `
 title: Database Schema
 ---
 erDiagram
-  users ||--o{ ORDER : places
-users {
-INTEGER id
-VARCHAR(255) email
-VARCHAR(100) username
+    users {
+        INTEGER id PK
+    VARCHAR(255) email 
+    VARCHAR(100) username 
 }
-
-posts ||--o{ ORDER : places
 posts {
-INTEGER id
-VARCHAR(255) title
-TEXT content
+        INTEGER id PK
+    VARCHAR(255) title 
+    TEXT content 
 }
-
-comments ||--o{ ORDER : places
+comments ||--o{ posts: uses
+comments ||--o{ users: uses
 comments {
-INTEGER id
-TEXT text
-INTEGER post_id
-INTEGER user_id
+        INTEGER id PK
+    TEXT text 
+    INTEGER post_id 
+    INTEGER user_id 
 }"
 `;

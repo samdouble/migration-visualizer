@@ -1,6 +1,22 @@
 import { Knex } from 'knex';
 import { IConnector } from './IConnector';
-import { Column, Ddl, MysqlColumn, MysqlTable, Table } from './types';
+import { Column, Ddl, ForeignKey, Table } from './types';
+
+export type MysqlTable = {
+  TABLE_NAME: string;
+  TABLE_SCHEMA: string;
+  TABLE_CATALOG: string;
+};
+
+export type MysqlColumn = {
+  COLUMN_DEFAULT: string;
+  COLUMN_KEY: string;
+  COLUMN_NAME: string;
+  COLUMN_TYPE: string;
+  IS_NULLABLE: string;
+  ORDINAL_POSITION: number;
+  TABLE_NAME: string;
+};
 
 export class MysqlConnector implements IConnector {
   async getColumns(db: Knex, tableName: string): Promise<Column[]> {
@@ -32,6 +48,15 @@ export class MysqlConnector implements IConnector {
       show create table ${tableName}
     `);
     return result[0][0]['Create Table'];
+  }
+
+  async getForeignKeys(db: Knex, tableName: string): Promise<ForeignKey[]> {
+    return db.raw(`
+      select * from information_schema.key_column_usage
+      where
+        table_name = ?
+        and table_schema = database()
+    `, [tableName]);
   }
 
   async getTables(db: Knex): Promise<Table[]> {

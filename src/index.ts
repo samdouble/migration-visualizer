@@ -35,7 +35,7 @@ export const visualize = async (_output: string) => {
   const connector = ConnectorFactory.create(db.client?.dialect);
   const tables = await connector.getTables(db);
   const columns = await Promise.all(
-    tables.map(async (table) => connector.getColumns(db, table.name))
+    tables.map(async (table) => connector.getColumns(db, table.name)),
   );
 
   db.destroy();

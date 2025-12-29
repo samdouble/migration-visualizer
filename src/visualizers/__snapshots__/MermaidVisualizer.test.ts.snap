@@ -20,7 +20,7 @@ comments ||--o{ users: uses
 comments {
         INTEGER id PK
     TEXT text 
-    INTEGER post_id 
-    INTEGER user_id 
+    INTEGER post_id FK
+    INTEGER user_id FK
 }"
 `;

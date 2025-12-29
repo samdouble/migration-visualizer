@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/samdouble/migration-visualizer/compare/v0.1.0...v0.2.0) (2025-12-29)
+
+
+### Features
+
+* **mermaid:** created ConnectorFactory and feed tables to mermaid visualizer ([3dd5b37](https://github.com/samdouble/migration-visualizer/commit/3dd5b37860b3d2d2fcf21d8a9724d4a9c6b2e978))
+
 ## 0.1.0 (2025-12-29)
 
 

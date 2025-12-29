@@ -4,7 +4,7 @@ import { IConnector } from '../src/connectors/IConnector';
 export function runConnectorTests(
   name: string,
   setup: () => Promise<{ db: Knex; connector: IConnector }>,
-  teardown: (db: Knex) => Promise<void>
+  teardown: (db: Knex) => Promise<void>,
 ) {
   describe(name, () => {
     let db: Knex;
@@ -37,7 +37,7 @@ export function runConnectorTests(
         const tableNames = tables.map((t) => t.name);
 
         const hasKnexTables = tableNames.some((name) =>
-          name.toLowerCase().includes('knex')
+          name.toLowerCase().includes('knex'),
         );
         expect(hasKnexTables).toBe(false);
       });

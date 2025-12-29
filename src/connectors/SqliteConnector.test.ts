@@ -23,5 +23,5 @@ runConnectorTests(
   },
   async (knexDb) => {
     await knexDb.destroy();
-  }
+  },
 );

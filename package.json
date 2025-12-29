@@ -1,6 +1,6 @@
 {
   "name": "migration-visualizer",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A migration visualizer for Knex.js",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -37,6 +37,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
+    "@stylistic/eslint-plugin": "^5.6.1",
     "@types/better-sqlite3": "^7.6.12",
     "@types/jest": "^30.0.0",
     "better-sqlite3": "^12.5.0",

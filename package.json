@@ -19,15 +19,16 @@
     "migrate:status": "knex migrate:status",
     "migrate:up": "knex migrate:up",
     "migrate:down": "knex migrate:down",
-    "schema": "ts-node src/index.ts",
     "test": "jest --runInBand --testTimeout=20000"
   },
   "keywords": [
+    "database",
     "knex",
     "mermaid",
     "migrations",
     "mysql",
-    "sqlite"
+    "sqlite",
+    "visualizer"
   ],
   "dependencies": {
     "commander": "^14.0.2",

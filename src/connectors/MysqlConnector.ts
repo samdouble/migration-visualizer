@@ -18,6 +18,16 @@ export type MysqlColumn = {
   TABLE_NAME: string;
 };
 
+export type MysqlForeignKey = {
+  CONSTRAINT_NAME: string;
+  TABLE_NAME: string;
+  COLUMN_NAME: string;
+  REFERENCED_TABLE_NAME: string;
+  REFERENCED_COLUMN_NAME: string;
+  ON_DELETE: string;
+  ON_UPDATE: string;
+};
+
 export class MysqlConnector implements IConnector {
   async getColumns(db: Knex, tableName: string): Promise<Column[]> {
     const result = await db.raw(`
@@ -51,12 +61,21 @@ export class MysqlConnector implements IConnector {
   }
 
   async getForeignKeys(db: Knex, tableName: string): Promise<ForeignKey[]> {
-    return db.raw(`
+    const result = await db.raw(`
       select * from information_schema.key_column_usage
       where
         table_name = ?
         and table_schema = database()
     `, [tableName]);
+    return result[0].map((fk: MysqlForeignKey) => ({
+      id: fk['CONSTRAINT_NAME'],
+      from_table_name: fk['TABLE_NAME'],
+      from_column_name: fk['COLUMN_NAME'],
+      to_table_name: fk['REFERENCED_TABLE_NAME'],
+      to_column_name: fk['REFERENCED_COLUMN_NAME'],
+      on_delete: fk['ON_DELETE'],
+      on_update: fk['ON_UPDATE'],
+    }));
   }
 
   async getTables(db: Knex): Promise<Table[]> {

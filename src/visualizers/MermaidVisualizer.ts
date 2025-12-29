@@ -8,8 +8,12 @@ const indent = (text: string, nbSpaces: number): string => {
 };
 
 export class MermaidVisualizer implements IVisualizer {
-  static renderColumn(column: Column): string {
-    return `${column.type} ${column.name} ${column.pk ? 'PK' : ''}`;
+  static renderColumn(column: Column, isForeignKey: boolean): string {
+    const keys = [
+      ...(column.pk ? ['PK'] : []),
+      ...(isForeignKey ? ['FK'] : []),
+    ];
+    return `${column.type} ${column.name} ${keys.join(',')}`;
   }
 
   static renderReferences(foreignKeys: ForeignKey[]): string {
@@ -23,7 +27,10 @@ export class MermaidVisualizer implements IVisualizer {
     `
     ${MermaidVisualizer.renderReferences(foreignKeys)}
     ${table.name} {
-    ${indent(columns.map((column) => MermaidVisualizer.renderColumn(column)).join('\n'), 8)}
+    ${indent(columns.map((column) => {
+      const isForeignKey = foreignKeys.some((foreignKey) => foreignKey.from_column_name === column.name);
+      return MermaidVisualizer.renderColumn(column, isForeignKey);
+    }).join('\n'), 8)}
     }
     `,
     );

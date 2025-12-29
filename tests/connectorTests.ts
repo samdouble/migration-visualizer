@@ -20,29 +20,6 @@ export function runConnectorTests(
       await teardown(db);
     });
 
-    describe('getTables', () => {
-      it('should return all user-created tables', async () => {
-        const tables = await connector.getTables(db);
-        const tableNames = tables.map((t) => t.name);
-
-        expect(tableNames).toContain('users');
-        expect(tableNames).toContain('posts');
-        expect(tableNames).toContain('comments');
-        expect(tableNames).toContain('tags');
-        expect(tableNames).toContain('post_tags');
-      });
-
-      it('should not include internal migration tables', async () => {
-        const tables = await connector.getTables(db);
-        const tableNames = tables.map((t) => t.name);
-
-        const hasKnexTables = tableNames.some((name) =>
-          name.toLowerCase().includes('knex'),
-        );
-        expect(hasKnexTables).toBe(false);
-      });
-    });
-
     describe('getColumns', () => {
       it('should return columns for users table', async () => {
         const columns = await connector.getColumns(db, 'users');
@@ -85,6 +62,40 @@ export function runConnectorTests(
         const ddl = await connector.getDdl(db, 'nonexistent_table_xyz');
 
         expect(ddl).toBeNull();
+      });
+    });
+
+    describe('getForeignKeys', () => {
+      it('should return foreign keys for comments table', async () => {
+        const foreignKeys = await connector.getForeignKeys(db, 'comments');
+        const foreignKeyNames = foreignKeys.map((fk) => fk.from_column_name);
+
+        expect(foreignKeyNames).toContain('post_id');
+        expect(foreignKeyNames).toContain('parent_id');
+        expect(foreignKeyNames).toContain('author_id');
+      });
+    });
+
+    describe('getTables', () => {
+      it('should return all user-created tables', async () => {
+        const tables = await connector.getTables(db);
+        const tableNames = tables.map((t) => t.name);
+
+        expect(tableNames).toContain('users');
+        expect(tableNames).toContain('posts');
+        expect(tableNames).toContain('comments');
+        expect(tableNames).toContain('tags');
+        expect(tableNames).toContain('post_tags');
+      });
+
+      it('should not include internal migration tables', async () => {
+        const tables = await connector.getTables(db);
+        const tableNames = tables.map((t) => t.name);
+
+        const hasKnexTables = tableNames.some((name) =>
+          name.toLowerCase().includes('knex'),
+        );
+        expect(hasKnexTables).toBe(false);
       });
     });
   });

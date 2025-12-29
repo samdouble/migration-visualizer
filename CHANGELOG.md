@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.3.0](https://github.com/samdouble/migration-visualizer/compare/v0.2.0...v0.3.0) (2025-12-29)
+
+
+### Features
+
+* **mermaid:** added foreign key mention in column information ([21d984c](https://github.com/samdouble/migration-visualizer/commit/21d984c16d47e5e950973e31c760cec23c5584ff))
+* **mermaid:** added support for column description ([70e6826](https://github.com/samdouble/migration-visualizer/commit/70e682601645ff739a1df3689f417096daac6276))
+* **mermaid:** added support for foreign keys ([8243681](https://github.com/samdouble/migration-visualizer/commit/8243681b3a8b4be2b82b113623976225d216bedf))
+* **mermaid:** added support for unique keys ([d373ac1](https://github.com/samdouble/migration-visualizer/commit/d373ac1c1c7b3aa3dc56ad391cfb63c224350039))
+
 ## [0.2.0](https://github.com/samdouble/migration-visualizer/compare/v0.1.0...v0.2.0) (2025-12-29)
 
 

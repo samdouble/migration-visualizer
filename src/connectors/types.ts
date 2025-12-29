@@ -5,6 +5,7 @@ export type Column = {
   notnull: boolean;
   dflt_value: string;
   pk: boolean;
+  table_name: string;
 };
 
 export type Ddl = string;
@@ -22,11 +23,22 @@ export type MysqlColumn = {
   COLUMN_TYPE: string;
   IS_NULLABLE: string;
   ORDINAL_POSITION: number;
+  TABLE_NAME: string;
 };
+
 export type SqliteTable = {
   name: string;
   schema: string;
   database: string;
+};
+
+export type SqliteColumn = {
+  cid: number;
+  name: string;
+  type: string;
+  notnull: boolean;
+  dflt_value: string;
+  pk: boolean;
 };
 
 export type Table = {

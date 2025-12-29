@@ -1,18 +1,18 @@
 import { Knex } from 'knex';
 import { IConnector } from './IConnector';
-import { Column, Ddl, SqliteTable, Table } from './types';
+import { Column, Ddl, SqliteColumn, SqliteTable, Table } from './types';
 
 export class SqliteConnector implements IConnector {
-  constructor(private readonly db: Knex) {
-    this.db = db;
+  async getColumns(db: Knex, tableName: string): Promise<Column[]> {
+    const result = await db.raw(`pragma table_info(${tableName})`);
+    return result.map((c: SqliteColumn) => ({
+      ...c,
+      table_name: tableName,
+    }));
   }
 
-  async getColumns(tableName: string): Promise<Column[]> {
-    return this.db.raw(`pragma table_info(${tableName})`);
-  }
-
-  async getDdl(tableName: string): Promise<Ddl | null> {
-    const result = await this.db.raw(`
+  async getDdl(db: Knex, tableName: string): Promise<Ddl | null> {
+    const result = await db.raw(`
       select sql from sqlite_master
       where
         type='table'
@@ -23,8 +23,8 @@ export class SqliteConnector implements IConnector {
     return result.length > 0 ? result[0].sql : null;
   }
 
-  async getTables(): Promise<Table[]> {
-    const result = await this.db.raw(`
+  async getTables(db: Knex): Promise<Table[]> {
+    const result = await db.raw(`
       select name from sqlite_master 
       where
         type='table' 

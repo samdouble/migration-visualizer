@@ -5,6 +5,13 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  checks: write
+  contents: write
+  pull-requests: write
+  statuses: write
+  id-token: write
+
 jobs:
   publish:
     runs-on: ubuntu-latest

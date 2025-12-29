@@ -33,6 +33,7 @@ export class SqliteConnector implements IConnector {
     const result = await db.raw(`pragma table_info(${tableName})`);
     return result.map((c: SqliteColumn) => ({
       ...c,
+      description: undefined,
       table_name: tableName,
     }));
   }

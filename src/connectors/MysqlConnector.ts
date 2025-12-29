@@ -9,6 +9,7 @@ export type MysqlTable = {
 };
 
 export type MysqlColumn = {
+  COLUMN_COMMENT: string;
   COLUMN_DEFAULT: string;
   COLUMN_KEY: string;
   COLUMN_NAME: string;
@@ -41,6 +42,7 @@ export class MysqlConnector implements IConnector {
     return result[0].map((c: MysqlColumn) => ({
       cid: c['ORDINAL_POSITION'],
       name: c['COLUMN_NAME'],
+      description: c['COLUMN_COMMENT'],
       type: c['COLUMN_TYPE'],
       notnull: c['IS_NULLABLE'] === 'NO',
       dflt_value: c['COLUMN_DEFAULT'],

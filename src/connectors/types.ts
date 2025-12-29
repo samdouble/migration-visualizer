@@ -11,12 +11,6 @@ export type Column = {
 
 export type Ddl = string;
 
-export type Table = {
-  name: string;
-  schema: string;
-  database: string;
-};
-
 export type ForeignKey = {
   id: number;
   from_table_name: string;
@@ -25,4 +19,17 @@ export type ForeignKey = {
   to_column_name: string;
   on_delete: string;
   on_update: string;
+};
+
+export type Index = {
+  name: string;
+  columns: string[];
+  unique: boolean;
+  table_name: string;
+};
+
+export type Table = {
+  name: string;
+  schema: string;
+  database: string;
 };

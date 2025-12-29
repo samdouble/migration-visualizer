@@ -76,6 +76,18 @@ export function runConnectorTests(
       });
     });
 
+    describe('getIndexes', () => {
+      it('should return indexes for comments table', async () => {
+        const indexes = await connector.getIndexes(db, 'comments');
+        const indexNames = indexes.map((i) => i.name);
+
+        expect(indexNames).toContain('comments_post_id_index');
+        expect(indexNames).toContain('comments_author_id_index');
+        expect(indexNames).toContain('comments_parent_id_index');
+        expect(indexNames).toContain('comments_author_id_created_at_unique');
+      });
+    });
+
     describe('getTables', () => {
       it('should return all user-created tables', async () => {
         const tables = await connector.getTables(db);

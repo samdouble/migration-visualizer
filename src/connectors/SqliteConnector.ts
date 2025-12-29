@@ -1,6 +1,6 @@
 import { Knex } from 'knex';
 import { IConnector } from './IConnector';
-import { Column, Ddl, ForeignKey, Table } from './types';
+import { Column, Ddl, ForeignKey, Index, Table } from './types';
 
 export type SqliteTable = {
   name: string;
@@ -26,6 +26,14 @@ export type SqliteForeignKey = {
   on_delete: string;
   on_update: string;
   match: string;
+};
+
+export type SqliteIndex = {
+  type: string;
+  name: string;
+  tbl_name: string;
+  rootpage: number;
+  sql: string;
 };
 
 export class SqliteConnector implements IConnector {
@@ -63,9 +71,27 @@ export class SqliteConnector implements IConnector {
     }));
   }
 
+  async getIndexes(db: Knex, tableName: string): Promise<Index[]> {
+    const result = await db.raw(`
+      select * from sqlite_master
+      where
+        type='index'
+        and tbl_name=?
+    `, [tableName]);
+    return result.map((index: SqliteIndex) => ({
+      name: index.name,
+      columns: index.sql?.toLowerCase()
+        .match(/create(?:\sunique)?\sindex\s`\w+`\s+on\s+`\w+`\s+\((.*?)\)/)?.[1]
+        .split(',')
+        .map((c) => c.trim().replace(/`/g, '')),
+      unique: index.sql?.toLowerCase().startsWith('create unique index'),
+      table_name: index.tbl_name,
+    }));
+  }
+
   async getTables(db: Knex): Promise<Table[]> {
     const result = await db.raw(`
-      select name from sqlite_master 
+      select * from sqlite_master 
       where
         type='table' 
         and name not like 'sqlite_%' 

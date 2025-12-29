@@ -18,6 +18,7 @@ export default defineConfig([
       '@stylistic': stylistic,
     },
 		rules: {
+      '@stylistic/max-len': ['error', { 'code': 120 }],
       '@stylistic/no-trailing-spaces': 'error',
       '@typescript-eslint/no-explicit-any': 'error',
 			'@typescript-eslint/no-unused-vars': [

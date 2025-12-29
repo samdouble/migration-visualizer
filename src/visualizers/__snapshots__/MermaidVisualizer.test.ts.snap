@@ -16,8 +16,8 @@ posts {
     varchar(255) title  ""
     text content  ""
 }
-comments ||--o{ posts: uses
-comments ||--o{ users: uses
+comments ||--o{ posts: -
+comments ||--o{ users: -
 comments {
         integer id PK ""
     text text  ""

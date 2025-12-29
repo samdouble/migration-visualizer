@@ -2,7 +2,7 @@ import knex, { Knex } from 'knex';
 import fs from 'node:fs';
 import path from 'node:path';
 import { ConnectorFactory } from './connectors/ConnectorFactory';
-import { MermaidVisualizer } from './visualizers/MermaidVisualizer';
+import { VisualizerFactory } from './visualizers/VisualizerFactory';
 export { IConnector } from './connectors/IConnector';
 export { MysqlConnector } from './connectors/MysqlConnector';
 export { SqliteConnector } from './connectors/SqliteConnector';
@@ -15,7 +15,16 @@ const findKnexConfig = () => {
   return candidates.map(f => path.join(cwd, f)).find(fs.existsSync);
 };
 
-export const visualize = async (_output: string) => {
+export type VisualizeOptions = {
+  output?: string;
+  changed: string[];
+};
+
+export const visualize = async (options: VisualizeOptions) => {
+  const {
+    changed = [],
+    output = 'mermaid',
+  } = options;
   const knexfilePath = findKnexConfig();
   if (!knexfilePath) {
     console.error('knexfile not found');
@@ -30,6 +39,9 @@ export const visualize = async (_output: string) => {
   }
 
   const db = knex(config);
+  console.log(changed);
+  const list = await db.migrate.list();
+  console.log(list);
   await db.migrate.latest();
 
   const connector = ConnectorFactory.create(db.client?.dialect);
@@ -46,6 +58,6 @@ export const visualize = async (_output: string) => {
 
   db.destroy();
 
-  const visualizer = new MermaidVisualizer();
+  const visualizer = VisualizerFactory.create(output);
   return visualizer.visualize(tables, columns.flat(), foreignKeys.flat(), indexes.flat());
 };

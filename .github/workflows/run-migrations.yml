@@ -19,18 +19,26 @@ jobs:
           cache: npm
       - name: Install dependencies
         run: npm ci
-      - name: Run migrations
-        run: npm run migrate
-      - name: Check migration status
-        run: npm run migrate:status
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v47
+        with:
+          files_yaml: |
+            migrations:
+              - tests/fixtures/migrations/**/*.ts
       - name: Generate visualization
         id: visualize
+        env:
+          CHANGED_MIGRATIONS: ${{ steps.changed-files.outputs.migrations_all_changed_files }}
         run: |
           npm run build
-          DIAGRAM=$(npx migration-visualizer visualize)
+          DIAGRAM=$(npx migration-visualizer visualize --changed $CHANGED_MIGRATIONS)
           echo "diagram<<EOF" >> $GITHUB_OUTPUT
           echo "$DIAGRAM" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
+      - name: Run migrations
+        run: npm run migrate
       - name: Add PR comment
         uses: actions/github-script@v8
         with:

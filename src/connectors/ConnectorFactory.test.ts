@@ -12,4 +12,8 @@ describe('ConnectorFactory', () => {
     const connector = ConnectorFactory.create('sqlite');
     expect(connector).toBeInstanceOf(SqliteConnector);
   });
+
+  it('should throw an error for an unsupported visualizer type', () => {
+    expect(() => ConnectorFactory.create('unsupported')).toThrow(Error);
+  });
 });

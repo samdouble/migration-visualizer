@@ -12,11 +12,17 @@ program
 
 program.command('visualize')
   .description('Visualize a database migration as a Entity Relationship diagram')
-  .option('--output', 'output the diagram to a file')
-  .action(async (_arg, options) => {
-    const output = options.output;
-    const diagram = await visualize(output);
+  .option('--changed <files...>', 'list of new and updated migration files', '')
+  .option('--output <format>', 'output the diagram to a file', 'mermaid')
+  .action(async (options) => {
+    const diagram = await visualize({
+      ...options,
+    });
     console.log(diagram);
   });
 
-program.parse();
+if (process.env.NODE_ENV !== 'test') {
+  program.parse();
+}
+
+export default program;

@@ -31,6 +31,7 @@ export default defineConfig([
       'comma-dangle': ['error', 'always-multiline'],
       'no-var': 'error',
       'prefer-const': 'error',
+      'semi': ['error', 'always'],
 		},
 	},
 ]);

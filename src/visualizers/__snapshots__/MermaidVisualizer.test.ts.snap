@@ -6,22 +6,22 @@ title: Database Schema
 ---
 erDiagram
     users {
-        INTEGER id PK ""
-    VARCHAR(255) email  ""
-    VARCHAR(100) username  ""
-    VARCHAR(255) password_hash  "This cannot be the actual password"
+        integer id PK ""
+    varchar(255) email  ""
+    varchar(100) username  ""
+    varchar(255) password_hash  "This cannot be the actual password"
 }
 posts {
-        INTEGER id PK ""
-    VARCHAR(255) title  ""
-    TEXT content  ""
+        integer id PK ""
+    varchar(255) title  ""
+    text content  ""
 }
 comments ||--o{ posts: uses
 comments ||--o{ users: uses
 comments {
-        INTEGER id PK ""
-    TEXT text  ""
-    INTEGER post_id FK ""
-    INTEGER user_id FK ""
+        integer id PK ""
+    text text  ""
+    integer post_id FK ""
+    integer user_id FK ""
 }"
 `;

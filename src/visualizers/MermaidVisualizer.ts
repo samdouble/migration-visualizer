@@ -13,7 +13,7 @@ export class MermaidVisualizer implements IVisualizer {
       ...(column.pk ? ['PK'] : []),
       ...(isForeignKey ? ['FK'] : []),
     ];
-    return `${column.type} ${column.name} ${keys.join(',')} "${column.description ?? ''}"`;
+    return `${column.type.toLowerCase()} ${column.name} ${keys.join(',')} "${column.description ?? ''}"`;
   }
 
   static renderReferences(foreignKeys: ForeignKey[]): string {

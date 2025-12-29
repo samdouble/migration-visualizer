@@ -16,6 +16,8 @@ export async function up(knex: Knex): Promise<void> {
     table.index('post_id');
     table.index('author_id');
     table.index('parent_id');
+
+    table.unique(['author_id', 'created_at']);
   });
 }
 

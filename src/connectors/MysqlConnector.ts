@@ -1,6 +1,6 @@
 import { Knex } from 'knex';
 import { IConnector } from './IConnector';
-import { Column, Ddl, ForeignKey, Table } from './types';
+import { Column, Ddl, ForeignKey, Index, Table } from './types';
 
 export type MysqlTable = {
   TABLE_NAME: string;
@@ -27,6 +27,13 @@ export type MysqlForeignKey = {
   REFERENCED_COLUMN_NAME: string;
   ON_DELETE: string;
   ON_UPDATE: string;
+};
+
+export type MysqlIndex = {
+  INDEX_NAME: string;
+  COLUMN_NAME: string;
+  NON_UNIQUE: number;
+  TABLE_NAME: string;
 };
 
 export class MysqlConnector implements IConnector {
@@ -77,6 +84,21 @@ export class MysqlConnector implements IConnector {
       to_column_name: fk['REFERENCED_COLUMN_NAME'],
       on_delete: fk['ON_DELETE'],
       on_update: fk['ON_UPDATE'],
+    }));
+  }
+
+  async getIndexes(db: Knex, tableName: string): Promise<Index[]> {
+    const result = await db.raw(`
+      select * from information_schema.statistics
+      where
+        table_name = ?
+        and table_schema = database()
+    `, [tableName]);
+    return result[0].map((i: MysqlIndex) => ({
+      name: i['INDEX_NAME'],
+      columns: i['COLUMN_NAME'].split(',').map((c) => c.trim()),
+      unique: i['NON_UNIQUE'] === 0,
+      table_name: i['TABLE_NAME'],
     }));
   }
 

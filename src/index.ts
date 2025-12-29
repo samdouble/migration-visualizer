@@ -40,9 +40,12 @@ export const visualize = async (_output: string) => {
   const foreignKeys = await Promise.all(
     tables.map(async (table) => connector.getForeignKeys(db, table.name)),
   );
+  const indexes = await Promise.all(
+    tables.map(async (table) => connector.getIndexes(db, table.name)),
+  );
 
   db.destroy();
 
   const visualizer = new MermaidVisualizer();
-  return visualizer.visualize(tables, columns.flat(), foreignKeys.flat());
+  return visualizer.visualize(tables, columns.flat(), foreignKeys.flat(), indexes.flat());
 };

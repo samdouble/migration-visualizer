@@ -1,4 +1,4 @@
-import { Column, ForeignKey, Table } from '../connectors/types';
+import { Column, ForeignKey, Index, Table } from '../connectors/types';
 import { MermaidVisualizer } from '../visualizers/MermaidVisualizer';
 
 describe('MermaidVisualizer', () => {
@@ -14,7 +14,16 @@ describe('MermaidVisualizer', () => {
     { cid: 0, name: 'id', type: 'INTEGER', notnull: true, dflt_value: '', pk: true, table_name: 'users' },
     { cid: 1, name: 'email', type: 'VARCHAR(255)', notnull: true, dflt_value: '', pk: false, table_name: 'users' },
     { cid: 2, name: 'username', type: 'VARCHAR(100)', notnull: true, dflt_value: '', pk: false, table_name: 'users' },
-    { cid: 3, name: 'password_hash', type: 'VARCHAR(255)', notnull: true, dflt_value: '', pk: false, table_name: 'users', description: 'This cannot be the actual password' },
+    {
+      cid: 3,
+      name: 'password_hash',
+      type: 'VARCHAR(255)',
+      notnull: true,
+      dflt_value: '',
+      pk: false,
+      table_name: 'users',
+      description: 'This cannot be the actual password',
+    },
     { cid: 0, name: 'id', type: 'INTEGER', notnull: true, dflt_value: '', pk: true, table_name: 'posts' },
     { cid: 1, name: 'title', type: 'VARCHAR(255)', notnull: true, dflt_value: '', pk: false, table_name: 'posts' },
     { cid: 2, name: 'content', type: 'TEXT', notnull: true, dflt_value: '', pk: false, table_name: 'posts' },
@@ -25,12 +34,33 @@ describe('MermaidVisualizer', () => {
   ];
 
   const foreignKeys: ForeignKey[] = [
-    { id: 1, from_table_name: 'comments', from_column_name: 'post_id', to_table_name: 'posts', to_column_name: 'id', on_delete: 'CASCADE', on_update: 'CASCADE' },
-    { id: 2, from_table_name: 'comments', from_column_name: 'user_id', to_table_name: 'users', to_column_name: 'id', on_delete: 'CASCADE', on_update: 'CASCADE' },
+    {
+      id: 1,
+      from_table_name: 'comments',
+      from_column_name: 'post_id',
+      to_table_name: 'posts',
+      to_column_name: 'id',
+      on_delete: 'CASCADE',
+      on_update: 'CASCADE',
+    },
+    {
+      id: 2,
+      from_table_name: 'comments',
+      from_column_name: 'user_id',
+      to_table_name: 'users',
+      to_column_name: 'id',
+      on_delete: 'CASCADE',
+      on_update: 'CASCADE',
+    },
+  ];
+
+  const indexes: Index[] = [
+    { name: 'comments_post_id_index', columns: ['post_id'], unique: false, table_name: 'comments' },
+    { name: 'comments_user_id_index', columns: ['user_id'], unique: false, table_name: 'comments' },
   ];
 
   it('should generate mermaid diagram', async () => {
-    const result = await visualizer.visualize(tables, columns, foreignKeys);
+    const result = await visualizer.visualize(tables, columns, foreignKeys, indexes);
 
     expect(result).toMatchSnapshot();
   });

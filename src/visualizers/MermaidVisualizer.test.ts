@@ -14,6 +14,7 @@ describe('MermaidVisualizer', () => {
     { cid: 0, name: 'id', type: 'INTEGER', notnull: true, dflt_value: '', pk: true, table_name: 'users' },
     { cid: 1, name: 'email', type: 'VARCHAR(255)', notnull: true, dflt_value: '', pk: false, table_name: 'users' },
     { cid: 2, name: 'username', type: 'VARCHAR(100)', notnull: true, dflt_value: '', pk: false, table_name: 'users' },
+    { cid: 3, name: 'password_hash', type: 'VARCHAR(255)', notnull: true, dflt_value: '', pk: false, table_name: 'users', description: 'This cannot be the actual password' },
     { cid: 0, name: 'id', type: 'INTEGER', notnull: true, dflt_value: '', pk: true, table_name: 'posts' },
     { cid: 1, name: 'title', type: 'VARCHAR(255)', notnull: true, dflt_value: '', pk: false, table_name: 'posts' },
     { cid: 2, name: 'content', type: 'TEXT', notnull: true, dflt_value: '', pk: false, table_name: 'posts' },

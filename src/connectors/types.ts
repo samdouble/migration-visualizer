@@ -1,6 +1,7 @@
 export type Column = {
   cid: number;
   name: string;
+  description?: string;
   type: string;
   notnull: boolean;
   dflt_value: string;

@@ -43,3 +43,4 @@ jobs:
           npm link
           migration-visualizer --help
           migration-visualizer --version
+          migration-visualizer visualize

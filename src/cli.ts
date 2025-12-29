@@ -1,27 +1,22 @@
 #!/usr/bin/env node
 
-const args = process.argv.slice(2);
+import { Command } from 'commander';
+import { visualize } from './index';
 
-if (args.includes('--help') || args.includes('-h')) {
-  console.log(`
-migration-visualizer - Visualize your database migrations
+const program = new Command();
 
-Usage:
-  migration-visualizer [options]
+program
+  .name('migration-visualizer')
+  .description('Migration Visualizer for Knex.js')
+  .version('0.1.0');
 
-Options:
-  -h, --help      Show this help message
-  -v, --version   Show version number
-`);
-  process.exit(0);
-}
+program.command('visualize')
+  .description('Visualize a database migration as a Entity Relationship diagram')
+  .option('--output', 'output the diagram to a file')
+  .action(async (_arg, options) => {
+    const output = options.output;
+    const diagram = await visualize(output);
+    console.log(diagram);
+  });
 
-if (args.includes('--version') || args.includes('-v')) {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const pkg = require('../package.json');
-  console.log(pkg.version);
-  process.exit(0);
-}
-
-console.log('migration-visualizer');
-console.log('No command specified. Use --help for usage information.');
+program.parse();

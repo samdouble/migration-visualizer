@@ -33,7 +33,7 @@ runConnectorTests(
       },
     });
     await knexDb.migrate.latest();
-    const connector = new MysqlConnector(knexDb);
+    const connector = new MysqlConnector();
     return { db: knexDb, connector };
   },
   async (knexDb) => {

@@ -18,7 +18,7 @@ runConnectorTests(
     });
 
     await knexDb.migrate.latest();
-    const connector = new SqliteConnector(knexDb);
+    const connector = new SqliteConnector();
     return { db: knexDb, connector };
   },
   async (knexDb) => {

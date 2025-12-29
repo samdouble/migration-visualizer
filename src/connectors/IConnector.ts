@@ -1,7 +1,8 @@
+import { Knex } from 'knex';
 import { Column, Ddl, Table } from './types';
 
 export interface IConnector {
-  getColumns: (tableName: string) => Promise<Column[]>;
-  getDdl: (tableName: string) => Promise<Ddl | null>;
-  getTables: () => Promise<Table[]>;
+  getColumns: (db: Knex, tableName: string) => Promise<Column[]>;
+  getDdl: (db: Knex, tableName: string) => Promise<Ddl | null>;
+  getTables: (db: Knex) => Promise<Table[]>;
 }

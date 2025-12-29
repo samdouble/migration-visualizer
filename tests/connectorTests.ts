@@ -22,7 +22,7 @@ export function runConnectorTests(
 
     describe('getTables', () => {
       it('should return all user-created tables', async () => {
-        const tables = await connector.getTables();
+        const tables = await connector.getTables(db);
         const tableNames = tables.map((t) => t.name);
 
         expect(tableNames).toContain('users');
@@ -33,7 +33,7 @@ export function runConnectorTests(
       });
 
       it('should not include internal migration tables', async () => {
-        const tables = await connector.getTables();
+        const tables = await connector.getTables(db);
         const tableNames = tables.map((t) => t.name);
 
         const hasKnexTables = tableNames.some((name) =>
@@ -45,7 +45,7 @@ export function runConnectorTests(
 
     describe('getColumns', () => {
       it('should return columns for users table', async () => {
-        const columns = await connector.getColumns('users');
+        const columns = await connector.getColumns(db, 'users');
         const columnNames = columns.map((c) => c.name);
 
         expect(columnNames).toContain('id');
@@ -56,7 +56,7 @@ export function runConnectorTests(
       });
 
       it('should return columns for posts table including view_count', async () => {
-        const columns = await connector.getColumns('posts');
+        const columns = await connector.getColumns(db, 'posts');
         const columnNames = columns.map((c) => c.name);
 
         expect(columnNames).toContain('id');
@@ -74,7 +74,7 @@ export function runConnectorTests(
 
     describe('getDdl', () => {
       it('should return DDL for users table', async () => {
-        const ddl = await connector.getDdl('users');
+        const ddl = await connector.getDdl(db, 'users');
 
         expect(ddl).toBeDefined();
         expect(ddl?.length).toBeGreaterThan(0);
@@ -82,7 +82,7 @@ export function runConnectorTests(
       });
 
       it('should return empty for non-existent table', async () => {
-        const ddl = await connector.getDdl('nonexistent_table_xyz');
+        const ddl = await connector.getDdl(db, 'nonexistent_table_xyz');
 
         expect(ddl).toBeNull();
       });

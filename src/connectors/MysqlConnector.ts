@@ -3,12 +3,8 @@ import { IConnector } from './IConnector';
 import { Column, Ddl, MysqlColumn, MysqlTable, Table } from './types';
 
 export class MysqlConnector implements IConnector {
-  constructor(private readonly db: Knex) {
-    this.db = db;
-  }
-
-  async getColumns(tableName: string): Promise<Column[]> {
-    const result = await this.db.raw(`
+  async getColumns(db: Knex, tableName: string): Promise<Column[]> {
+    const result = await db.raw(`
       select * from information_schema.columns 
       where
         table_name=?
@@ -23,22 +19,23 @@ export class MysqlConnector implements IConnector {
       notnull: c['IS_NULLABLE'] === 'NO',
       dflt_value: c['COLUMN_DEFAULT'],
       pk: c['COLUMN_KEY'] === 'PRI',
+      table_name: c['TABLE_NAME'],
     }));
   }
 
-  async getDdl(tableName: string): Promise<Ddl | null> {
-    const exists = await this.tableExists(tableName);
+  async getDdl(db: Knex, tableName: string): Promise<Ddl | null> {
+    const exists = await this.tableExists(db, tableName);
     if (!exists) {
       return null;
     }
-    const result = await this.db.raw(`
+    const result = await db.raw(`
       show create table ${tableName}
     `);
     return result[0][0]['Create Table'];
   }
 
-  async getTables(): Promise<Table[]> {
-    const result = await this.db.raw(`
+  async getTables(db: Knex): Promise<Table[]> {
+    const result = await db.raw(`
       select * from information_schema.tables
       where
         table_type = 'BASE TABLE'
@@ -52,8 +49,8 @@ export class MysqlConnector implements IConnector {
     }));
   }
 
-  async tableExists(tableName: string): Promise<boolean> {
-    const result = await this.db.raw(`
+  async tableExists(db: Knex, tableName: string): Promise<boolean> {
+    const result = await db.raw(`
       select count(*) as cnt from information_schema.tables
       where
         table_name = ?

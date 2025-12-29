@@ -37,10 +37,26 @@ jobs:
           npm run build
       - name: Test CLI
         run: |
+          echo "
+            import type { Knex } from 'knex';
+            const config: Knex.Config = {
+              client: 'better-sqlite3',
+              connection: {
+                filename: ':memory:',
+              },
+              useNullAsDefault: true,
+              migrations: {
+                directory: './tests/fixtures/migrations',
+                extension: 'ts',
+              },
+            };
+            export default config;
+          " > knexfile.ts
+
           node dist/cli.js --help
           node dist/cli.js --version
 
           npm link
           migration-visualizer --help
           migration-visualizer --version
-          migration-visualizer visualize
+          migration-visualizer visualize --changed tests/fixtures/migrations/20251227000006_create_likes.ts

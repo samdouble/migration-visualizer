@@ -1,5 +1,5 @@
 import dedent from 'dedent';
-import { Column, ForeignKey, Index, Table } from '../connectors/types';
+import { Column, ForeignKey, Index, State, Table } from '../connectors/types';
 import { IVisualizer } from './IVisualizer';
 
 const indent = (text: string, nbSpaces: number): string => {
@@ -38,7 +38,8 @@ export class MermaidVisualizer implements IVisualizer {
     );
   }
 
-  async visualize(tables: Table[], columns: Column[], foreignKeys: ForeignKey[], indexes: Index[]): Promise<string> {
+  async visualize(_beforeState: State, afterState: State): Promise<string> {
+    const { tables, columns, foreignKeys, indexes } = afterState;
     const tableDefs = tables.map((table) => {
       const tableColumns = columns.filter((column) => column.table_name === table.name);
       const tableForeignKeys = foreignKeys.filter((foreignKey) => foreignKey.from_table_name === table.name);

@@ -1,5 +1,5 @@
-import { Column, ForeignKey, Index, Table } from '../connectors/types';
+import { State } from '../connectors/types';
 
 export interface IVisualizer {
-  visualize: (tables: Table[], columns: Column[], foreignKeys: ForeignKey[], indexes: Index[]) => Promise<string>;
+  visualize: (beforeState: State, afterState: State) => Promise<string>;
 }

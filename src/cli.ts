@@ -1,14 +1,19 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { visualize } from './index';
 
+const packageJson = JSON.parse(
+  readFileSync(join(__dirname, '../package.json'), 'utf-8'),
+);
 const program = new Command();
 
 program
   .name('migration-visualizer')
   .description('Migration Visualizer for Knex.js')
-  .version('0.1.0');
+  .version(packageJson.version);
 
 program.command('visualize')
   .description('Visualize a database migration as a Entity Relationship diagram')

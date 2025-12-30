@@ -27,8 +27,6 @@ describeIfPostgres('PostgreSQL', () => {
       return { db: knexDb, connector };
     },
     async (knexDb) => {
-      // Clean up tables in reverse order of creation
-      await knexDb.migrate.rollback(undefined, true);
       await knexDb.destroy();
     },
   );

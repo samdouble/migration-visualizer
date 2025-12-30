@@ -1,5 +1,3 @@
-# Migration Visualizer
-
 [![CI](https://github.com/samdouble/migration-visualizer/actions/workflows/checks.yml/badge.svg)](https://github.com/samdouble/migration-visualizer/actions/workflows/checks.yml)
 [![npm version](https://img.shields.io/npm/v/migration-visualizer.svg?style=flat)](https://www.npmjs.org/package/migration-visualizer)
 [![Downloads](https://img.shields.io/npm/dm/migration-visualizer.svg?style=flat)](https://www.npmjs.org/package/migration-visualizer)
@@ -12,6 +10,9 @@
 [![Postgres](https://img.shields.io/badge/Postgres-%23316192.svg?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![SQLite](https://img.shields.io/badge/SQLite-%2307405e.svg?logo=sqlite&logoColor=white)](https://www.sqlite.org/)
 [![Jest](https://img.shields.io/badge/Jest-C21325?logo=jest&logoColor=fff)](https://jestjs.io/)
+[![npm](https://img.shields.io/badge/npm-CB3837?logo=npm&logoColor=fff)](https://www.npmjs.com/)
+
+# Migration Visualizer
 
 A migration visualizer for Knex.js
 

@@ -60,7 +60,10 @@ describe('MermaidVisualizer', () => {
   ];
 
   it('should generate mermaid diagram', async () => {
-    const result = await visualizer.visualize(tables, columns, foreignKeys, indexes);
+    const result = await visualizer.visualize(
+      { tables, columns, foreignKeys, indexes },
+      { tables, columns, foreignKeys, indexes },
+    );
 
     expect(result).toMatchSnapshot();
   });

@@ -33,3 +33,10 @@ export type Table = {
   schema: string;
   database: string;
 };
+
+export type State = {
+  tables: Table[];
+  columns: Column[];
+  foreignKeys: ForeignKey[];
+  indexes: Index[];
+};

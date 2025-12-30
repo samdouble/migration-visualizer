@@ -48,16 +48,16 @@ jobs:
         id: visualize
         env:
           CHANGED_MIGRATIONS: ${{ steps.changed-files.outputs.migrations_all_changed_files }}
+        if: steps.changed-files.outputs.migrations_all_changed_files != ''
         run: |
           npm run build
           DIAGRAM=$(npx migration-visualizer visualize --changed $CHANGED_MIGRATIONS)
           echo "diagram<<EOF" >> $GITHUB_OUTPUT
           echo "$DIAGRAM" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
-      - name: Run migrations
-        run: npm run migrate
       - name: Add PR comment
         uses: actions/github-script@v8
+        if: steps.changed-files.outputs.migrations_all_changed_files != ''
         with:
           github-token: ${{ secrets.PAT }}
           script: |

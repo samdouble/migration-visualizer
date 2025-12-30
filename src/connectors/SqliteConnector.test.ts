@@ -12,7 +12,7 @@ runConnectorTests(
       },
       useNullAsDefault: true,
       migrations: {
-        directory: './tests/fixtures/migrations',
+        directory: './tests/fixtures/migrations/knex',
         extension: 'ts',
       },
     });

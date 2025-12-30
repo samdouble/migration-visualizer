@@ -1,7 +1,7 @@
-import knex from 'knex';
 import { MySQLDB } from 'mysql-memory-server/dist/types';
 import { runConnectorTests } from '../../tests/connectorTests';
 import { dbConnect, dbDisconnect } from '../../tests/mysql';
+import { KnexOrm } from '../orms/KnexOrm';
 import { MysqlConnector } from './MysqlConnector';
 
 let db: MySQLDB;
@@ -16,9 +16,11 @@ afterAll(async () => {
 });
 
 runConnectorTests(
+  'Knex',
   'MySQL',
   async () => {
-    const knexDb = knex({
+    const orm = new KnexOrm();
+    await orm.initialize({
       client: 'mysql2',
       connection: {
         host: '127.0.0.1',
@@ -32,11 +34,11 @@ runConnectorTests(
         extension: 'ts',
       },
     });
-    await knexDb.migrate.latest();
+    await orm.migrateLatest();
     const connector = new MysqlConnector();
-    return { db: knexDb, connector };
+    return { orm, connector };
   },
-  async (knexDb) => {
-    await knexDb.destroy();
+  async (orm) => {
+    await orm.close();
   },
 );

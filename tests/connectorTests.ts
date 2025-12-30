@@ -1,28 +1,29 @@
-import { Knex } from 'knex';
 import { IConnector } from '../src/connectors/IConnector';
+import { IOrm } from '../src/orms/IOrm';
 
 export function runConnectorTests(
-  name: string,
-  setup: () => Promise<{ db: Knex; connector: IConnector }>,
-  teardown: (db: Knex) => Promise<void>,
+  ormName: string,
+  connectorName: string,
+  setup: () => Promise<{ orm: IOrm; connector: IConnector }>,
+  teardown: (orm: IOrm) => Promise<void>,
 ) {
-  describe(name, () => {
-    let db: Knex;
+  describe(`${ormName} - ${connectorName}`, () => {
+    let orm: IOrm;
     let connector: IConnector;
 
     beforeAll(async () => {
       const result = await setup();
-      db = result.db;
+      orm = result.orm;
       connector = result.connector;
     });
 
     afterAll(async () => {
-      await teardown(db);
+      await teardown(orm);
     });
 
     describe('getColumns', () => {
       it('should return columns for users table', async () => {
-        const columns = await connector.getColumns(db, 'users');
+        const columns = await connector.getColumns(orm, 'users');
         const columnNames = columns.map((c) => c.name);
 
         expect(columnNames).toContain('id');
@@ -33,7 +34,7 @@ export function runConnectorTests(
       });
 
       it('should return columns for posts table including view_count', async () => {
-        const columns = await connector.getColumns(db, 'posts');
+        const columns = await connector.getColumns(orm, 'posts');
         const columnNames = columns.map((c) => c.name);
 
         expect(columnNames).toContain('id');
@@ -51,7 +52,7 @@ export function runConnectorTests(
 
     describe('getDdl', () => {
       it('should return DDL for users table', async () => {
-        const ddl = await connector.getDdl(db, 'users');
+        const ddl = await connector.getDdl(orm, 'users');
 
         expect(ddl).toBeDefined();
         expect(ddl?.length).toBeGreaterThan(0);
@@ -59,7 +60,7 @@ export function runConnectorTests(
       });
 
       it('should return empty for non-existent table', async () => {
-        const ddl = await connector.getDdl(db, 'nonexistent_table_xyz');
+        const ddl = await connector.getDdl(orm, 'nonexistent_table_xyz');
 
         expect(ddl).toBeNull();
       });
@@ -67,7 +68,7 @@ export function runConnectorTests(
 
     describe('getForeignKeys', () => {
       it('should return foreign keys for comments table', async () => {
-        const foreignKeys = await connector.getForeignKeys(db, 'comments');
+        const foreignKeys = await connector.getForeignKeys(orm, 'comments');
         const foreignKeyNames = foreignKeys.map((fk) => fk.from_column_name);
 
         expect(foreignKeyNames).toContain('post_id');
@@ -78,7 +79,7 @@ export function runConnectorTests(
 
     describe('getIndexes', () => {
       it('should return indexes for comments table', async () => {
-        const indexes = await connector.getIndexes(db, 'comments');
+        const indexes = await connector.getIndexes(orm, 'comments');
         const indexNames = indexes.map((i) => i.name);
 
         expect(indexNames).toContain('comments_post_id_index');
@@ -90,7 +91,7 @@ export function runConnectorTests(
 
     describe('getTables', () => {
       it('should return all user-created tables', async () => {
-        const tables = await connector.getTables(db);
+        const tables = await connector.getTables(orm);
         const tableNames = tables.map((t) => t.name);
 
         expect(tableNames).toContain('users');
@@ -101,13 +102,13 @@ export function runConnectorTests(
       });
 
       it('should not include internal migration tables', async () => {
-        const tables = await connector.getTables(db);
+        const tables = await connector.getTables(orm);
         const tableNames = tables.map((t) => t.name);
 
-        const hasKnexTables = tableNames.some((name) =>
-          name.toLowerCase().includes('knex'),
+        const hasInternalTables = tableNames.some((name) =>
+          name.toLowerCase().startsWith(orm.getTablePrefix()),
         );
-        expect(hasKnexTables).toBe(false);
+        expect(hasInternalTables).toBe(false);
       });
     });
   });

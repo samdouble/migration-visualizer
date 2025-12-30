@@ -3,30 +3,33 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { ConnectorFactory } from '../connectors/ConnectorFactory';
 import { State } from '../connectors/types';
+import { IOrm } from './IOrm';
 import { Migration } from './types';
 
-export class KnexOrm {
+export class KnexOrm implements IOrm {
   private db: Knex | null = null;
 
   constructor() {
     this.db = null;
   }
 
-  async initialize(): Promise<void> {
+  async initialize(providedConfig?: unknown): Promise<void> {
     if (this.db) {
       return;
     }
-    const configFilePath = KnexOrm.getConfigFile();
-    if (!configFilePath) {
-      throw new Error('Knexfile file not found');
+    let config = providedConfig as Knex.Config | undefined;
+    if (!config) {
+      const configFilePath = KnexOrm.getConfigFile();
+      if (!configFilePath) {
+        throw new Error('Knexfile file not found');
+      }
+      try {
+        config = (await import(configFilePath)).default ?? (await import(configFilePath));
+      } catch (err) {
+        throw new Error(`Error loading Knexfile: ${err}`);
+      }
     }
-    let config: Knex.Config;
-    try {
-      config = (await import(configFilePath)).default ?? (await import(configFilePath));
-    } catch (err) {
-      throw new Error(`Error loading Knexfile: ${err}`);
-    }
-    this.db = knex(config);
+    this.db = knex(config ?? {});
   }
 
   static getConfigFile(): string | null {
@@ -51,15 +54,15 @@ export class KnexOrm {
       await this.initialize();
     }
     const connector = ConnectorFactory.create(this.db!.client?.dialect);
-    const tables = await connector.getTables(this.db!);
+    const tables = await connector.getTables(this);
     const columns = await Promise.all(
-      tables.map(async (table) => connector.getColumns(this.db!, table.name)),
+      tables.map(async (table) => connector.getColumns(this, table.name)),
     );
     const foreignKeys = await Promise.all(
-      tables.map(async (table) => connector.getForeignKeys(this.db!, table.name)),
+      tables.map(async (table) => connector.getForeignKeys(this, table.name)),
     );
     const indexes = await Promise.all(
-      tables.map(async (table) => connector.getIndexes(this.db!, table.name)),
+      tables.map(async (table) => connector.getIndexes(this, table.name)),
     );
     return {
       tables,
@@ -69,11 +72,29 @@ export class KnexOrm {
     };
   }
 
+  getTablePrefix(): string {
+    return 'knex_';
+  }
+
+  async migrateLatest(): Promise<void> {
+    if (!this.db) {
+      await this.initialize();
+    }
+    await this.db!.migrate.latest();
+  }
+
   async migrateUp(migrationName: string): Promise<void> {
     if (!this.db) {
       await this.initialize();
     }
     await this.db!.migrate.up({ name: migrationName });
+  }
+
+  async query<T>(query: string, params?: unknown[]): Promise<T> {
+    if (!this.db) {
+      await this.initialize();
+    }
+    return await this.db!.raw(query, params ?? []) as T;
   }
 
   close(): void {

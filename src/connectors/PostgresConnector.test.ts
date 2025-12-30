@@ -1,14 +1,16 @@
-import knex from 'knex';
 import { runConnectorTests } from '../../tests/connectorTests';
+import { KnexOrm } from '../orms/KnexOrm';
 import { PostgresConnector } from './PostgresConnector';
 
 const describeIfPostgres = process.env.CI ? describe : describe.skip;
 
 describeIfPostgres('PostgreSQL', () => {
   runConnectorTests(
+    'Knex',
     'PostgreSQL',
     async () => {
-      const knexDb = knex({
+      const orm = new KnexOrm();
+      await orm.initialize({
         client: 'pg',
         connection: {
           host: process.env.POSTGRES_HOST,
@@ -22,12 +24,12 @@ describeIfPostgres('PostgreSQL', () => {
           extension: 'ts',
         },
       });
-      await knexDb.migrate.latest();
+      await orm.migrateLatest();
       const connector = new PostgresConnector();
-      return { db: knexDb, connector };
+      return { orm, connector };
     },
-    async (knexDb) => {
-      await knexDb.destroy();
+    async (orm) => {
+      await orm.close();
     },
   );
 });

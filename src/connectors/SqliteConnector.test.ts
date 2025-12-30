@@ -1,11 +1,13 @@
-import knex from 'knex';
 import { runConnectorTests } from '../../tests/connectorTests';
+import { KnexOrm } from '../orms/KnexOrm';
 import { SqliteConnector } from './SqliteConnector';
 
 runConnectorTests(
+  'Knex',
   'SQLite',
   async () => {
-    const knexDb = knex({
+    const orm = new KnexOrm();
+    await orm.initialize({
       client: 'better-sqlite3',
       connection: {
         filename: ':memory:',
@@ -16,12 +18,11 @@ runConnectorTests(
         extension: 'ts',
       },
     });
-
-    await knexDb.migrate.latest();
+    await orm.migrateLatest();
     const connector = new SqliteConnector();
-    return { db: knexDb, connector };
+    return { orm, connector };
   },
-  async (knexDb) => {
-    await knexDb.destroy();
+  async (orm) => {
+    await orm.close();
   },
 );

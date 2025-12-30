@@ -4,7 +4,7 @@ export type Column = {
   description?: string;
   type: string;
   notnull: boolean;
-  dflt_value: string;
+  dflt_value: string | null;
   pk: boolean;
   table_name: string;
 };
@@ -12,7 +12,7 @@ export type Column = {
 export type Ddl = string;
 
 export type ForeignKey = {
-  id: number;
+  id: number | string;
   from_table_name: string;
   from_column_name: string;
   to_table_name: string;

@@ -1,9 +1,10 @@
+import { IConnector } from "./IConnector";
 import { MysqlConnector } from "./MysqlConnector";
 import { PostgresConnector } from "./PostgresConnector";
 import { SqliteConnector } from "./SqliteConnector";
 
 export const ConnectorFactory = {
-  create: (dialect: string) => {
+  create: (dialect: string): IConnector => {
     switch (dialect) {
       case 'mysql':
       case 'mysql2':

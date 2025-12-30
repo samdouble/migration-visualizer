@@ -4,6 +4,11 @@ exports[`MermaidVisualizer should generate mermaid diagram 1`] = `
 "---
 title: Database Schema
 ---
+%%{init: { 'theme': 'base', 'themeVariables': { 
+  'primaryColor': '#00ff00', 
+  'lineColor': '#0000ff',
+  'mainBkg': '#ffffff'
+} } }%%
 erDiagram
     users {
         integer id PK ""
@@ -17,7 +22,10 @@ posts {
     text content  ""
 }
 comments ||--o{ posts: -
-comments ||--o{ users: -
+    
+
+    comments ||--o{ users: -
+    
 comments {
         integer id PK ""
     text text  ""

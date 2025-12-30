@@ -19,7 +19,11 @@ export class MermaidVisualizer implements IVisualizer {
 
   static renderReferences(foreignKeys: ForeignKey[]): string {
     return foreignKeys.map((foreignKey) => {
-      return `${foreignKey.from_table_name} ||--o{ ${foreignKey.to_table_name}: -`;
+      return (
+        `
+        ${foreignKey.from_table_name} ||--o{ ${foreignKey.to_table_name}: -
+        `
+      );
     }).join('\n');
   }
 
@@ -52,6 +56,11 @@ export class MermaidVisualizer implements IVisualizer {
     ---
     title: Database Schema
     ---
+    %%{init: { 'theme': 'base', 'themeVariables': { 
+      'primaryColor': '#00ff00', 
+      'lineColor': '#0000ff',
+      'mainBkg': '#ffffff'
+    } } }%%
     erDiagram
     ${indent(tableDefs.join('\n'), 4)}
     `,

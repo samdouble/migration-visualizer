@@ -2,13 +2,21 @@
   "name": "migration-visualizer",
   "version": "0.3.0",
   "description": "A migration visualizer for Knex.js",
+  "author": "samdouble",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "homepage": "https://github.com/samdouble/migration-visualizer",
+  "bugs": {
+    "url": "https://github.com/samdouble/migration-visualizer/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samdouble/migration-visualizer.git"
+  },
   "bin": {
     "migration-visualizer": "dist/cli.js"
   },
-  "author": "samdouble",
   "scripts": {
     "build": "tsup",
     "lint": "eslint .",

@@ -18,7 +18,7 @@ describeIfPostgres('PostgreSQL', () => {
           password: process.env.POSTGRES_PASSWORD,
         },
         migrations: {
-          directory: './tests/fixtures/migrations',
+          directory: './tests/fixtures/migrations/knex',
           extension: 'ts',
         },
       });

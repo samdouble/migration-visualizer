@@ -31,7 +31,7 @@ jobs:
               },
               useNullAsDefault: true,
               migrations: {
-                directory: './tests/fixtures/migrations',
+                directory: './tests/fixtures/migrations/knex',
                 extension: 'ts',
               },
             };
@@ -43,7 +43,7 @@ jobs:
         with:
           files_yaml: |
             migrations:
-              - tests/fixtures/migrations/**/*.ts
+              - tests/fixtures/knex/migrations/**/*.ts
       - name: Generate visualization
         id: visualize
         env:

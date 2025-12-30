@@ -1,7 +1,8 @@
+import { IVisualizer } from "./IVisualizer";
 import { MermaidVisualizer } from "./MermaidVisualizer";
 
 export const VisualizerFactory = {
-  create: (type: string) => {
+  create: (type: string): IVisualizer => {
     switch (type) {
       case 'mermaid':
         return new MermaidVisualizer();

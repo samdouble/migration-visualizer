@@ -1,4 +1,4 @@
-import { Knex } from 'knex';
+import { IOrm } from '../orms/IOrm';
 import { IConnector } from './IConnector';
 import { Column, Ddl, ForeignKey, Index, Table } from './types';
 
@@ -15,6 +15,10 @@ export type SqliteColumn = {
   notnull: boolean;
   dflt_value: string;
   pk: boolean;
+};
+
+export type SqliteDdl = {
+  sql: string;
 };
 
 export type SqliteForeignKey = {
@@ -37,8 +41,8 @@ export type SqliteIndex = {
 };
 
 export class SqliteConnector implements IConnector {
-  async getColumns(db: Knex, tableName: string): Promise<Column[]> {
-    const result = await db.raw(`pragma table_info(${tableName})`);
+  async getColumns(orm: IOrm, tableName: string): Promise<Column[]> {
+    const result = await orm.query<SqliteColumn[]>(`pragma table_info(${tableName})`);
     return result.map((c: SqliteColumn) => ({
       ...c,
       description: undefined,
@@ -46,8 +50,8 @@ export class SqliteConnector implements IConnector {
     }));
   }
 
-  async getDdl(db: Knex, tableName: string): Promise<Ddl | null> {
-    const result = await db.raw(`
+  async getDdl(orm: IOrm, tableName: string): Promise<Ddl | null> {
+    const result = await orm.query<SqliteDdl[]>(`
       select sql from sqlite_master
       where
         type='table'
@@ -58,8 +62,8 @@ export class SqliteConnector implements IConnector {
     return result.length > 0 ? result[0].sql : null;
   }
 
-  async getForeignKeys(db: Knex, tableName: string): Promise<ForeignKey[]> {
-    const result = await db.raw(`PRAGMA foreign_key_list(${tableName})`);
+  async getForeignKeys(orm: IOrm, tableName: string): Promise<ForeignKey[]> {
+    const result = await orm.query<SqliteForeignKey[]>(`pragma foreign_key_list(${tableName})`);
     return result.map((fk: SqliteForeignKey) => ({
       id: fk.id,
       from_table_name: tableName,
@@ -71,8 +75,8 @@ export class SqliteConnector implements IConnector {
     }));
   }
 
-  async getIndexes(db: Knex, tableName: string): Promise<Index[]> {
-    const result = await db.raw(`
+  async getIndexes(orm: IOrm, tableName: string): Promise<Index[]> {
+    const result = await orm.query<SqliteIndex[]>(`
       select * from sqlite_master
       where
         type='index'
@@ -80,23 +84,25 @@ export class SqliteConnector implements IConnector {
     `, [tableName]);
     return result.map((index: SqliteIndex) => ({
       name: index.name,
-      columns: index.sql?.toLowerCase()
-        .match(/create(?:\sunique)?\sindex\s`\w+`\s+on\s+`\w+`\s+\((.*?)\)/)?.[1]
-        .split(',')
-        .map((c) => c.trim().replace(/`/g, '')),
+      columns: (
+        index.sql?.toLowerCase()
+          .match(/create(?:\sunique)?\sindex\s`\w+`\s+on\s+`\w+`\s+\((.*?)\)/)?.[1]
+          .split(',')
+          .map((c) => c.trim().replace(/`/g, ''))
+      ) ?? [],
       unique: index.sql?.toLowerCase().startsWith('create unique index'),
       table_name: index.tbl_name,
     }));
   }
 
-  async getTables(db: Knex): Promise<Table[]> {
-    const result = await db.raw(`
+  async getTables(orm: IOrm): Promise<Table[]> {
+    const result = await orm.query<SqliteTable[]>(`
       select * from sqlite_master 
       where
         type='table' 
         and name not like 'sqlite_%' 
-        and name not like 'knex_%'
-    `);
+        and name not like ?
+    `, [orm.getTablePrefix()]);
     return result.map((t: SqliteTable) => ({
       name: t.name,
       schema: t.schema,

@@ -1,4 +1,4 @@
-import { Knex } from 'knex';
+import { IOrm } from '../orms/IOrm';
 import { IConnector } from './IConnector';
 import { Column, Ddl, ForeignKey, Index, Table } from './types';
 
@@ -37,8 +37,8 @@ export type MysqlIndex = {
 };
 
 export class MysqlConnector implements IConnector {
-  async getColumns(db: Knex, tableName: string): Promise<Column[]> {
-    const result = await db.raw(`
+  async getColumns(orm: IOrm, tableName: string): Promise<Column[]> {
+    const result = await orm.query<MysqlColumn[][]>(`
       select * from information_schema.columns 
       where
         table_name=?
@@ -58,19 +58,19 @@ export class MysqlConnector implements IConnector {
     }));
   }
 
-  async getDdl(db: Knex, tableName: string): Promise<Ddl | null> {
-    const exists = await this.tableExists(db, tableName);
+  async getDdl(orm: IOrm, tableName: string): Promise<Ddl | null> {
+    const exists = await this.tableExists(orm, tableName);
     if (!exists) {
       return null;
     }
-    const result = await db.raw(`
+    const result = await orm.query<{ 'Create Table': string }[][]>(`
       show create table ${tableName}
     `);
     return result[0][0]['Create Table'];
   }
 
-  async getForeignKeys(db: Knex, tableName: string): Promise<ForeignKey[]> {
-    const result = await db.raw(`
+  async getForeignKeys(orm: IOrm, tableName: string): Promise<ForeignKey[]> {
+    const result = await orm.query<MysqlForeignKey[][]>(`
       select * from information_schema.key_column_usage
       where
         table_name = ?
@@ -87,8 +87,8 @@ export class MysqlConnector implements IConnector {
     }));
   }
 
-  async getIndexes(db: Knex, tableName: string): Promise<Index[]> {
-    const result = await db.raw(`
+  async getIndexes(orm: IOrm, tableName: string): Promise<Index[]> {
+    const result = await orm.query<MysqlIndex[][]>(`
       select * from information_schema.statistics
       where
         table_name = ?
@@ -102,14 +102,14 @@ export class MysqlConnector implements IConnector {
     }));
   }
 
-  async getTables(db: Knex): Promise<Table[]> {
-    const result = await db.raw(`
+  async getTables(orm: IOrm): Promise<Table[]> {
+    const result = await orm.query<MysqlTable[][]>(`
       select * from information_schema.tables
       where
         table_type = 'BASE TABLE'
         and table_schema = database()
-        and table_name not like 'knex_%'
-    `);
+        and table_name not like ?
+    `, [orm.getTablePrefix()]);
     return result[0].map((t: MysqlTable) => ({
       name: t['TABLE_NAME'],
       schema: t['TABLE_SCHEMA'],
@@ -117,8 +117,8 @@ export class MysqlConnector implements IConnector {
     }));
   }
 
-  async tableExists(db: Knex, tableName: string): Promise<boolean> {
-    const result = await db.raw(`
+  async tableExists(orm: IOrm, tableName: string): Promise<boolean> {
+    const result = await orm.query<{ cnt: number }[][]>(`
       select count(*) as cnt from information_schema.tables
       where
         table_name = ?

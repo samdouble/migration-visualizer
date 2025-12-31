@@ -51,10 +51,10 @@ export class PostgresConnector implements IConnector {
         c.table_name
       from information_schema.columns c
       where 
-        c.table_name = ?
+        c.table_name = '${tableName}'
         and c.table_schema = current_schema()
       order by c.ordinal_position
-    `, [tableName]);
+    `);
 
     const primaryKeys = await orm.query<{ rows: PostgresPrimaryKey[]}>(`
       select kcu.column_name
@@ -64,9 +64,9 @@ export class PostgresConnector implements IConnector {
         and tc.table_schema = kcu.table_schema
       where 
         tc.constraint_type = 'PRIMARY KEY'
-        and tc.table_name = ?
+        and tc.table_name = '${tableName}'
         and tc.table_schema = current_schema()
-    `, [tableName]);
+    `);
 
     const pkColumns = new Set(primaryKeys.rows.map((pk: PostgresPrimaryKey) => pk.column_name));
 
@@ -116,9 +116,9 @@ export class PostgresConnector implements IConnector {
         and rc.constraint_schema = tc.table_schema
       where 
         tc.constraint_type = 'FOREIGN KEY'
-        and tc.table_name = ?
+        and tc.table_name = '${tableName}'
         and tc.table_schema = current_schema()
-    `, [tableName]);
+    `);
 
     return result.rows.map((fk: PostgresForeignKey, index: number) => ({
       id: index,
@@ -139,11 +139,10 @@ export class PostgresConnector implements IConnector {
         indexdef
       from pg_indexes
       where 
-        tablename = ?
+        tablename = '${tableName}'
         and schemaname = current_schema()
-    `, [tableName]);
-
-    return result.rows.map((i: PostgresIndex) => {
+    `);
+    return result.rows.map((i) => {
       const columnsMatch = i.indexdef.match(/\(([^)]+)\)/);
       const columns = columnsMatch
         ? columnsMatch[1].split(',').map(c => c.trim().replace(/"/g, ''))
@@ -169,8 +168,8 @@ export class PostgresConnector implements IConnector {
       where 
         table_type = 'BASE TABLE'
         and table_schema = current_schema()
-        and table_name not like ?
-    `, [orm.getTablePrefix()]);
+        and table_name not like '${orm.getTablePrefix()}%'
+    `);
 
     return result.rows.map((t: PostgresTable) => ({
       name: t.table_name,
@@ -184,9 +183,9 @@ export class PostgresConnector implements IConnector {
       select count(*) as cnt 
       from information_schema.tables
       where 
-        table_name = ?
+        table_name = '${tableName}'
         and table_schema = current_schema()
-    `, [tableName]);
+    `);
     return result.rows[0].cnt > 0;
   }
 }

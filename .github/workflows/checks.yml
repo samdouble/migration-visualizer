@@ -72,4 +72,6 @@ jobs:
           npm link
           migration-visualizer --help
           migration-visualizer --version
-          migration-visualizer visualize --changed tests/fixtures/migrations/knex/20251227000006_create_likes.ts
+          migration-visualizer visualize \
+            --changed tests/fixtures/migrations/knex/20251227000006_create_likes.ts \
+            --orm knex

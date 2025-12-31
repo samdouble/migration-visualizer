@@ -4,7 +4,7 @@ import path from 'node:path';
 import { ConnectorFactory } from '../connectors/ConnectorFactory';
 import { State } from '../connectors/types';
 import { IOrm } from './IOrm';
-import { Migration } from './types';
+import { Migration, OrmConfig } from './types';
 
 export class KnexOrm implements IOrm {
   private db: Knex | null = null;
@@ -13,7 +13,7 @@ export class KnexOrm implements IOrm {
     this.db = null;
   }
 
-  async initialize(providedConfig?: unknown): Promise<void> {
+  async initialize(providedConfig?: OrmConfig): Promise<void> {
     if (this.db) {
       return;
     }
@@ -21,7 +21,7 @@ export class KnexOrm implements IOrm {
     if (!config) {
       const configFilePath = KnexOrm.getConfigFile();
       if (!configFilePath) {
-        throw new Error('Knexfile file not found');
+        throw new Error('Knexfile not found');
       }
       try {
         config = (await import(configFilePath)).default ?? (await import(configFilePath));
@@ -88,6 +88,13 @@ export class KnexOrm implements IOrm {
       await this.initialize();
     }
     await this.db!.migrate.up({ name: migrationName });
+  }
+
+  async rollbackAll(): Promise<void> {
+    if (!this.db) {
+      await this.initialize();
+    }
+    await this.db!.migrate.rollback(undefined, true);
   }
 
   async query<T>(query: string, params?: unknown[]): Promise<T> {

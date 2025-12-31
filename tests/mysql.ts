@@ -6,7 +6,9 @@ let connection: sql.Connection;
 let db: MySQLDB;
 
 export const dbConnect = async () => {
-  db = await createDB();
+  db = await createDB({
+    version: '8.4.x',
+  });
   connection = await sql.createConnection({
     host: '127.0.0.1',
     port: db.port,

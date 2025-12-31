@@ -17,11 +17,36 @@ program
 
 program.command('visualize')
   .description('Visualize a database migration as a Entity Relationship diagram')
+  // Required
+  .option('--orm <orm>', 'ORM to use (knex, kysely)')
+  // Required for Kysely
+  .option('--dialect <dialect>', 'database dialect (e.g., sqlite3, mysql2, pg)')
+  .option('--migrations <path>', 'path to migrations directory')
+  .option('--host <host>', 'database host')
+  .option('--port <port>', 'database port')
+  .option('--database <database>', 'database name')
+  .option('--user <user>', 'database user')
+  .option('--password <password>', 'database password')
+  .option('--filename <filename>', 'database filename')
+  .option('--useNullAsDefault', 'use null as default for sqlite3', false)
+  // Optional
   .option('--changed <files...>', 'list of new and updated migration files', '')
   .option('--output <format>', 'output the diagram to a file', 'mermaid')
   .action(async (options) => {
     const diagram = await visualize({
-      ...options,
+      changed: options.changed,
+      connection: {
+        host: options.host,
+        port: options.port,
+        database: options.database,
+        user: options.user,
+        password: options.password,
+        useNullAsDefault: options.useNullAsDefault,
+      },
+      dialect: options.dialect,
+      migrations: options.migrations,
+      orm: options.orm,
+      output: options.output,
     });
     console.log(diagram);
   });

@@ -41,10 +41,9 @@ export class MysqlConnector implements IConnector {
     const result = await orm.query<MysqlColumn[][]>(`
       select * from information_schema.columns 
       where
-        table_name=?
+        table_name='${tableName}'
         and table_schema=database()
       `,
-      [tableName],
     );
     return result[0].map((c: MysqlColumn) => ({
       cid: c['ORDINAL_POSITION'],
@@ -71,11 +70,23 @@ export class MysqlConnector implements IConnector {
 
   async getForeignKeys(orm: IOrm, tableName: string): Promise<ForeignKey[]> {
     const result = await orm.query<MysqlForeignKey[][]>(`
-      select * from information_schema.key_column_usage
+      select
+        kcu.CONSTRAINT_NAME,
+        kcu.TABLE_NAME,
+        kcu.COLUMN_NAME,
+        kcu.REFERENCED_TABLE_NAME,
+        kcu.REFERENCED_COLUMN_NAME,
+        rc.DELETE_RULE AS ON_DELETE,
+        rc.UPDATE_RULE AS ON_UPDATE
+      from information_schema.key_column_usage kcu
+      left join information_schema.referential_constraints rc
+        on kcu.CONSTRAINT_NAME = rc.CONSTRAINT_NAME
+        and kcu.CONSTRAINT_SCHEMA = rc.CONSTRAINT_SCHEMA
       where
-        table_name = ?
-        and table_schema = database()
-    `, [tableName]);
+        kcu.table_name = '${tableName}'
+        and kcu.table_schema = database()
+        and kcu.referenced_table_name is not null
+    `);
     return result[0].map((fk: MysqlForeignKey) => ({
       id: fk['CONSTRAINT_NAME'],
       from_table_name: fk['TABLE_NAME'],
@@ -91,9 +102,9 @@ export class MysqlConnector implements IConnector {
     const result = await orm.query<MysqlIndex[][]>(`
       select * from information_schema.statistics
       where
-        table_name = ?
+        table_name = '${tableName}'
         and table_schema = database()
-    `, [tableName]);
+    `);
     return result[0].map((i: MysqlIndex) => ({
       name: i['INDEX_NAME'],
       columns: i['COLUMN_NAME'].split(',').map((c) => c.trim()),
@@ -108,8 +119,8 @@ export class MysqlConnector implements IConnector {
       where
         table_type = 'BASE TABLE'
         and table_schema = database()
-        and table_name not like ?
-    `, [orm.getTablePrefix()]);
+        and table_name not like '${orm.getTablePrefix()}%'
+    `);
     return result[0].map((t: MysqlTable) => ({
       name: t['TABLE_NAME'],
       schema: t['TABLE_SCHEMA'],
@@ -121,9 +132,9 @@ export class MysqlConnector implements IConnector {
     const result = await orm.query<{ cnt: number }[][]>(`
       select count(*) as cnt from information_schema.tables
       where
-        table_name = ?
+        table_name = '${tableName}'
         and table_schema = database()
-    `, [tableName]);
+    `);
     return result[0][0]['cnt'] > 0;
   }
 }

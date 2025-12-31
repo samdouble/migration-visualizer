@@ -1,3 +1,9 @@
+export enum EngineType {
+  Mysql = 'mysql',
+  Pg = 'pg',
+  Sqlite = 'sqlite',
+}
+
 export type Column = {
   cid: number;
   name: string;

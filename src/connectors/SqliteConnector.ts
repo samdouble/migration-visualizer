@@ -55,9 +55,8 @@ export class SqliteConnector implements IConnector {
       select sql from sqlite_master
       where
         type='table'
-        and name=?
+        and name='${tableName}'
       `,
-      [tableName],
     );
     return result.length > 0 ? result[0].sql : null;
   }
@@ -80,8 +79,8 @@ export class SqliteConnector implements IConnector {
       select * from sqlite_master
       where
         type='index'
-        and tbl_name=?
-    `, [tableName]);
+        and tbl_name='${tableName}'
+    `);
     return result.map((index: SqliteIndex) => ({
       name: index.name,
       columns: (
@@ -101,8 +100,8 @@ export class SqliteConnector implements IConnector {
       where
         type='table' 
         and name not like 'sqlite_%' 
-        and name not like ?
-    `, [orm.getTablePrefix()]);
+        and name not like '${orm.getTablePrefix()}%'
+    `);
     return result.map((t: SqliteTable) => ({
       name: t.name,
       schema: t.schema,

@@ -14,7 +14,7 @@
 
 # Migration Visualizer
 
-A migration visualizer for Knex.js
+This tool outputs Entity Relationship diagrams for Knex.js and Kysely migrations in Mermaid format.
 
 ## Usage
 
@@ -24,21 +24,98 @@ A migration visualizer for Knex.js
 npm install -g migration-visualizer
 ```
 
-```bash
-npx migration-visualizer visualize --changed path/to/migration1.ts,path/to/migration2.ts
-```
-
 ### CLI
 
+```bash
+npx migration-visualizer visualize [options]
+```
+
+#### Options
+
+| Option | Description | Required |
+|--------|-------------|----------|
+| `--orm <orm>` | ORM to use (`knex`, `kysely`) | Yes |
+| `--changed <files...>` | List of new and updated migration files | No |
+| `--output <format>` | Output format (default: `mermaid`) | No |
+
+#### Kysely-specific Options
+
+| Option | Description | Required |
+|--------|-------------|----------|
+| `--dialect <dialect>` | Database dialect (`sqlite3`, `mysql2`, `pg`) | Yes |
+| `--migrations <path>` | Path to migrations directory | Yes |
+| `--host <host>` | Database host | No |
+| `--port <port>` | Database port | No |
+| `--database <database>` | Database name | No |
+| `--user <user>` | Database user | No |
+| `--password <password>` | Database password | No |
+| `--filename <filename>` | Database filename (SQLite) | No |
+| `--useNullAsDefault` | Use null as default (SQLite) | No |
+
+#### Examples
+
+##### Knex.js
+
+`migration-visualizer` detects the Knexfile at the root of your project and uses it for configuration.
+
+```bash
+npx migration-visualizer visualize --orm knex --changed 20251227000006_create_likes.ts
+```
+
+##### Kysely
+
+Since Kysely does not provide a configuration file, you need to provide the dialect, migrations directory, and other connection details.
+
+**With MySQL**:
+
+```bash
+npx migration-visualizer visualize \
+  --orm kysely \
+  --dialect mysql2 \
+  --host localhost \
+  --port 3306 \
+  --database mydb \
+  --user root \
+  --password secret \
+  --migrations ./migrations \
+  --changed 20251227000006_create_likes.ts
+```
+
+**With PostgreSQL**:
+
+```bash
+npx migration-visualizer visualize \
+  --orm kysely \
+  --dialect pg \
+  --host localhost \
+  --port 5432 \
+  --database mydb \
+  --user postgres \
+  --password secret \
+  --migrations ./migrations \
+  --changed 20251227000006_create_likes.ts
+```
+**With SQLite**:
+
+```bash
+npx migration-visualizer visualize \
+  --orm kysely \
+  --dialect sqlite3 \
+  --filename dev.sqlite3 \
+  --migrations ./migrations \
+  --changed 20251227000006_create_likes.ts
+```
 
 ### GitHub Action
 
+TODO
 
 ## Features
 
 ### Supported ORMs
 
 - Knex.js
+- Kysely
 
 ### Supported Databases
 

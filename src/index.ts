@@ -1,29 +1,38 @@
 import partition from 'lodash.partition';
 import path from 'node:path';
+import type { ConnectionOptions } from './orms/OrmFactory';
 import { OrmFactory } from './orms/OrmFactory';
-import type { Migration } from './orms/types';
+import type { DialectType, Migration, OrmType } from './orms/types';
 import { VisualizerFactory } from './visualizers/VisualizerFactory';
 export * from './connectors';
 export * from './orms';
 export * from './visualizers';
 
 export type VisualizeOptions = {
-  output?: string;
   changed: string[];
+  connection?: ConnectionOptions;
+  dialect?: DialectType;
+  migrations?: string;
+  orm: OrmType;
+  output?: string;
 };
 
 export const visualize = async (options: VisualizeOptions) => {
   const {
     changed = [],
+    orm: ormName,
     output = 'mermaid',
   } = options;
-  let orm;
-  try {
-    orm = OrmFactory.create();
-  } catch (error) {
-    console.error('Error creating ORM:', error);
-    process.exit(1);
+  if (!ormName) {
+    throw new Error('ORM not provided');
   }
+
+  const orm = await OrmFactory.create(ormName, {
+    connection: options.connection,
+    dialect: options.dialect,
+    migrations: options.migrations,
+    useNullAsDefault: options.connection?.useNullAsDefault,
+  });
 
   const migrations = await orm.getMigrations();
   const pendingMigrations = migrations.pending;

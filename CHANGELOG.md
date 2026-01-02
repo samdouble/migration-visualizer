@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/samdouble/migration-visualizer/compare/v0.3.0...v0.4.0) (2026-01-02)
+
+
+### Features
+
+* **kysely:** added ORM ([8d02fc0](https://github.com/samdouble/migration-visualizer/commit/8d02fc0691997e4f0285cb95e74d03b1ae85dad7))
+
 ## [0.3.0](https://github.com/samdouble/migration-visualizer/compare/v0.2.0...v0.3.0) (2025-12-30)
 
 

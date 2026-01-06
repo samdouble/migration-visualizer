@@ -18,7 +18,7 @@ program
 program.command('visualize')
   .description('Visualize a database migration as a Entity Relationship diagram')
   // Required
-  .option('--orm <orm>', 'ORM to use (knex, kysely)')
+  .option('--query-builder <query-builder>', 'Query builder to use (knex, kysely)')
   // Required for Kysely
   .option('--dialect <dialect>', 'database dialect (e.g., sqlite3, mysql2, pg)')
   .option('--migrations <path>', 'path to migrations directory')
@@ -45,7 +45,7 @@ program.command('visualize')
       },
       dialect: options.dialect,
       migrations: options.migrations,
-      orm: options.orm,
+      queryBuilder: options.queryBuilder,
       output: options.output,
     });
     console.log(diagram);

@@ -1,15 +1,15 @@
 import { runConnectorTests } from '../../tests/connectorTests';
-import { KnexOrm } from '../orms/KnexOrm';
-import { KyselyOrm } from '../orms/KyselyOrm';
-import { DialectType } from '../orms/types';
+import { KnexQueryBuilder } from '../queryBuilders/KnexQueryBuilder';
+import { KyselyQueryBuilder } from '../queryBuilders/KyselyQueryBuilder';
+import { DialectType } from '../queryBuilders/types';
 import { SqliteConnector } from './SqliteConnector';
 
 runConnectorTests(
   'Knex',
   'SQLite',
   async () => {
-    const orm = new KnexOrm();
-    await orm.initialize({
+    const queryBuilder = new KnexQueryBuilder();
+    await queryBuilder.initialize({
       client: DialectType.BetterSqlite3,
       connection: {
         filename: ':memory:',
@@ -20,13 +20,13 @@ runConnectorTests(
         extension: 'ts',
       },
     });
-    await orm.migrateLatest();
+    await queryBuilder.migrateLatest();
     const connector = new SqliteConnector();
-    return { orm, connector };
+    return { queryBuilder, connector };
   },
-  async (orm) => {
-    await orm.rollbackAll();
-    await orm.close();
+  async (queryBuilder) => {
+    await queryBuilder.rollbackAll();
+    await queryBuilder.close();
   },
 );
 
@@ -34,8 +34,8 @@ runConnectorTests(
   'Kysely',
   'SQLite',
   async () => {
-    const orm = new KyselyOrm();
-    await orm.initialize({
+    const queryBuilder = new KyselyQueryBuilder();
+    await queryBuilder.initialize({
       client: 'better-sqlite3',
       connection: {
         filename: ':memory:',
@@ -46,12 +46,12 @@ runConnectorTests(
         extension: 'ts',
       },
     });
-    await orm.migrateLatest();
+    await queryBuilder.migrateLatest();
     const connector = new SqliteConnector();
-    return { orm, connector };
+    return { queryBuilder, connector };
   },
-  async (orm) => {
-    await orm.rollbackAll();
-    await orm.close();
+  async (queryBuilder) => {
+    await queryBuilder.rollbackAll();
+    await queryBuilder.close();
   },
 );

@@ -1,4 +1,4 @@
-import { IOrm } from '../orms/IOrm';
+import { IQueryBuilder } from '../queryBuilders/IQueryBuilder';
 import { IConnector } from './IConnector';
 import { Column, Ddl, ForeignKey, Index, Table } from './types';
 
@@ -41,8 +41,8 @@ export type SqliteIndex = {
 };
 
 export class SqliteConnector implements IConnector {
-  async getColumns(orm: IOrm, tableName: string): Promise<Column[]> {
-    const result = await orm.query<SqliteColumn[]>(`pragma table_info(${tableName})`);
+  async getColumns(queryBuilder: IQueryBuilder, tableName: string): Promise<Column[]> {
+    const result = await queryBuilder.query<SqliteColumn[]>(`pragma table_info(${tableName})`);
     return result.map((c: SqliteColumn) => ({
       ...c,
       description: undefined,
@@ -50,8 +50,8 @@ export class SqliteConnector implements IConnector {
     }));
   }
 
-  async getDdl(orm: IOrm, tableName: string): Promise<Ddl | null> {
-    const result = await orm.query<SqliteDdl[]>(`
+  async getDdl(queryBuilder: IQueryBuilder, tableName: string): Promise<Ddl | null> {
+    const result = await queryBuilder.query<SqliteDdl[]>(`
       select sql from sqlite_master
       where
         type='table'
@@ -61,8 +61,8 @@ export class SqliteConnector implements IConnector {
     return result.length > 0 ? result[0].sql : null;
   }
 
-  async getForeignKeys(orm: IOrm, tableName: string): Promise<ForeignKey[]> {
-    const result = await orm.query<SqliteForeignKey[]>(`pragma foreign_key_list(${tableName})`);
+  async getForeignKeys(queryBuilder: IQueryBuilder, tableName: string): Promise<ForeignKey[]> {
+    const result = await queryBuilder.query<SqliteForeignKey[]>(`pragma foreign_key_list(${tableName})`);
     return result.map((fk: SqliteForeignKey) => ({
       id: fk.id,
       from_table_name: tableName,
@@ -74,8 +74,8 @@ export class SqliteConnector implements IConnector {
     }));
   }
 
-  async getIndexes(orm: IOrm, tableName: string): Promise<Index[]> {
-    const result = await orm.query<SqliteIndex[]>(`
+  async getIndexes(queryBuilder: IQueryBuilder, tableName: string): Promise<Index[]> {
+    const result = await queryBuilder.query<SqliteIndex[]>(`
       select * from sqlite_master
       where
         type='index'
@@ -94,13 +94,13 @@ export class SqliteConnector implements IConnector {
     }));
   }
 
-  async getTables(orm: IOrm): Promise<Table[]> {
-    const result = await orm.query<SqliteTable[]>(`
+  async getTables(queryBuilder: IQueryBuilder): Promise<Table[]> {
+    const result = await queryBuilder.query<SqliteTable[]>(`
       select * from sqlite_master 
       where
         type='table' 
         and name not like 'sqlite_%' 
-        and name not like '${orm.getTablePrefix()}%'
+        and name not like '${queryBuilder.getTablePrefix()}%'
     `);
     return result.map((t: SqliteTable) => ({
       name: t.name,

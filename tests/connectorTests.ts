@@ -1,29 +1,29 @@
 import { IConnector } from '../src/connectors/IConnector';
-import { IOrm } from '../src/orms/IOrm';
+import { IQueryBuilder } from '../src/queryBuilders/IQueryBuilder';
 
 export function runConnectorTests(
-  ormName: string,
+  queryBuilderName: string,
   connectorName: string,
-  setup: () => Promise<{ orm: IOrm; connector: IConnector }>,
-  teardown: (orm: IOrm) => Promise<void>,
+  setup: () => Promise<{ queryBuilder: IQueryBuilder; connector: IConnector }>,
+  teardown: (queryBuilder: IQueryBuilder) => Promise<void>,
 ) {
-  describe(`${ormName} - ${connectorName}`, () => {
-    let orm: IOrm;
+  describe(`${queryBuilderName} - ${connectorName}`, () => {
+    let queryBuilder: IQueryBuilder;
     let connector: IConnector;
 
     beforeAll(async () => {
       const result = await setup();
-      orm = result.orm;
+      queryBuilder = result.queryBuilder;
       connector = result.connector;
     });
 
     afterAll(async () => {
-      await teardown(orm);
+      await teardown(queryBuilder);
     });
 
     describe('getColumns', () => {
       it('should return columns for users table', async () => {
-        const columns = await connector.getColumns(orm, 'users');
+        const columns = await connector.getColumns(queryBuilder, 'users');
         const columnNames = columns.map((c) => c.name);
 
         expect(columnNames).toContain('id');
@@ -34,7 +34,7 @@ export function runConnectorTests(
       });
 
       it('should return columns for posts table including view_count', async () => {
-        const columns = await connector.getColumns(orm, 'posts');
+        const columns = await connector.getColumns(queryBuilder, 'posts');
         const columnNames = columns.map((c) => c.name);
 
         expect(columnNames).toContain('id');
@@ -52,7 +52,7 @@ export function runConnectorTests(
 
     describe('getDdl', () => {
       it('should return DDL for users table', async () => {
-        const ddl = await connector.getDdl(orm, 'users');
+        const ddl = await connector.getDdl(queryBuilder, 'users');
 
         expect(ddl).toBeDefined();
         expect(ddl?.length).toBeGreaterThan(0);
@@ -60,7 +60,7 @@ export function runConnectorTests(
       });
 
       it('should return empty for non-existent table', async () => {
-        const ddl = await connector.getDdl(orm, 'nonexistent_table_xyz');
+        const ddl = await connector.getDdl(queryBuilder, 'nonexistent_table_xyz');
 
         expect(ddl).toBeNull();
       });
@@ -68,7 +68,7 @@ export function runConnectorTests(
 
     describe('getForeignKeys', () => {
       it('should return foreign keys for comments table', async () => {
-        const foreignKeys = await connector.getForeignKeys(orm, 'comments');
+        const foreignKeys = await connector.getForeignKeys(queryBuilder, 'comments');
         const foreignKeyNames = foreignKeys.map((fk) => fk.from_column_name);
 
         expect(foreignKeyNames).toContain('post_id');
@@ -79,7 +79,7 @@ export function runConnectorTests(
 
     describe('getIndexes', () => {
       it('should return indexes for comments table', async () => {
-        const indexes = await connector.getIndexes(orm, 'comments');
+        const indexes = await connector.getIndexes(queryBuilder, 'comments');
         const indexNames = indexes.map((i) => i.name);
 
         expect(indexNames).toContain('comments_post_id_index');
@@ -91,7 +91,7 @@ export function runConnectorTests(
 
     describe('getTables', () => {
       it('should return all user-created tables', async () => {
-        const tables = await connector.getTables(orm);
+        const tables = await connector.getTables(queryBuilder);
         const tableNames = tables.map((t) => t.name);
 
         expect(tableNames).toContain('users');
@@ -102,11 +102,11 @@ export function runConnectorTests(
       });
 
       it('should not include internal migration tables', async () => {
-        const tables = await connector.getTables(orm);
+        const tables = await connector.getTables(queryBuilder);
         const tableNames = tables.map((t) => t.name);
 
         const hasInternalTables = tableNames.some((name) =>
-          name.toLowerCase().startsWith(orm.getTablePrefix()),
+          name.toLowerCase().startsWith(queryBuilder.getTablePrefix()),
         );
         expect(hasInternalTables).toBe(false);
       });

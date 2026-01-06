@@ -1,6 +1,6 @@
 import { runConnectorTests } from '../../tests/connectorTests';
-import { KnexOrm } from '../orms/KnexOrm';
-import { KyselyOrm } from '../orms/KyselyOrm';
+import { KnexQueryBuilder } from '../queryBuilders/KnexQueryBuilder';
+import { KyselyQueryBuilder } from '../queryBuilders/KyselyQueryBuilder';
 import { PostgresConnector } from './PostgresConnector';
 
 const describeIfPostgres = process.env.CI ? describe : describe.skip;
@@ -10,8 +10,8 @@ describeIfPostgres('PostgreSQL', () => {
     'Knex',
     'PostgreSQL',
     async () => {
-      const orm = new KnexOrm();
-      await orm.initialize({
+      const queryBuilder = new KnexQueryBuilder();
+      await queryBuilder.initialize({
         client: 'pg',
         connection: {
           host: process.env.POSTGRES_HOST,
@@ -25,13 +25,13 @@ describeIfPostgres('PostgreSQL', () => {
           extension: 'ts',
         },
       });
-      await orm.migrateLatest();
+      await queryBuilder.migrateLatest();
       const connector = new PostgresConnector();
-      return { orm, connector };
+      return { queryBuilder, connector };
     },
-    async (orm) => {
-      await orm.rollbackAll();
-      await orm.close();
+    async (queryBuilder) => {
+      await queryBuilder.rollbackAll();
+      await queryBuilder.close();
     },
   );
 });
@@ -41,8 +41,8 @@ describeIfPostgres('PostgreSQL', () => {
     'Kysely',
     'PostgreSQL',
     async () => {
-      const orm = new KyselyOrm();
-      await orm.initialize({
+      const queryBuilder = new KyselyQueryBuilder();
+      await queryBuilder.initialize({
         client: 'pg',
         connection: {
           host: process.env.POSTGRES_HOST,
@@ -56,13 +56,13 @@ describeIfPostgres('PostgreSQL', () => {
           extension: 'ts',
         },
       });
-      await orm.migrateLatest();
+      await queryBuilder.migrateLatest();
       const connector = new PostgresConnector();
-      return { orm, connector };
+      return { queryBuilder, connector };
     },
-    async (orm) => {
-      await orm.rollbackAll();
-      await orm.close();
+    async (queryBuilder) => {
+      await queryBuilder.rollbackAll();
+      await queryBuilder.close();
     },
   );
 });

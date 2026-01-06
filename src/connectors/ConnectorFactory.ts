@@ -1,4 +1,4 @@
-import { DialectType } from "../orms/types";
+import { DialectType } from "../queryBuilders/types";
 import { IConnector } from "./IConnector";
 import { MysqlConnector } from "./MysqlConnector";
 import { PostgresConnector } from "./PostgresConnector";

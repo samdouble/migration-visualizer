@@ -51,7 +51,7 @@ jobs:
         if: steps.changed-files.outputs.migrations_all_changed_files != ''
         run: |
           npm run build
-          DIAGRAM=$(npx migration-visualizer visualize --changed $CHANGED_MIGRATIONS --orm knex)
+          DIAGRAM=$(npx migration-visualizer visualize --changed $CHANGED_MIGRATIONS --query-builder knex)
           echo "diagram<<EOF" >> $GITHUB_OUTPUT
           echo "$DIAGRAM" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT

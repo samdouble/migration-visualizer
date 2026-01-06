@@ -1,4 +1,4 @@
-import { IOrm } from '../orms/IOrm';
+import { IQueryBuilder } from '../queryBuilders/IQueryBuilder';
 import { IConnector } from './IConnector';
 import { Column, Ddl, ForeignKey, Index, Table } from './types';
 
@@ -39,8 +39,8 @@ export type PostgresPrimaryKey = {
 };
 
 export class PostgresConnector implements IConnector {
-  async getColumns(orm: IOrm, tableName: string): Promise<Column[]> {
-    const columns = await orm.query<{ rows: PostgresColumn[]}>(`
+  async getColumns(queryBuilder: IQueryBuilder, tableName: string): Promise<Column[]> {
+    const columns = await queryBuilder.query<{ rows: PostgresColumn[]}>(`
       select
         c.column_name,
         c.ordinal_position,
@@ -56,7 +56,7 @@ export class PostgresConnector implements IConnector {
       order by c.ordinal_position
     `);
 
-    const primaryKeys = await orm.query<{ rows: PostgresPrimaryKey[]}>(`
+    const primaryKeys = await queryBuilder.query<{ rows: PostgresPrimaryKey[]}>(`
       select kcu.column_name
       from information_schema.table_constraints tc
       join information_schema.key_column_usage kcu
@@ -82,20 +82,20 @@ export class PostgresConnector implements IConnector {
     }));
   }
 
-  async getDdl(orm: IOrm, tableName: string): Promise<Ddl | null> {
-    const exists = await this.tableExists(orm, tableName);
+  async getDdl(queryBuilder: IQueryBuilder, tableName: string): Promise<Ddl | null> {
+    const exists = await this.tableExists(queryBuilder, tableName);
     if (!exists) {
       return null;
     }
-    const columns = await this.getColumns(orm, tableName);
+    const columns = await this.getColumns(queryBuilder, tableName);
     const columnDefs = columns.map(c =>
       `${c.name} ${c.type}${c.notnull ? ' not null' : ''}${c.pk ? ' primary key' : ''}`,
     ).join(',\n  ');
     return `create table ${tableName} (\n  ${columnDefs}\n);`;
   }
 
-  async getForeignKeys(orm: IOrm, tableName: string): Promise<ForeignKey[]> {
-    const result = await orm.query<{ rows: PostgresForeignKey[]}>(`
+  async getForeignKeys(queryBuilder: IQueryBuilder, tableName: string): Promise<ForeignKey[]> {
+    const result = await queryBuilder.query<{ rows: PostgresForeignKey[]}>(`
       select
         tc.constraint_name,
         kcu.table_name,
@@ -131,8 +131,8 @@ export class PostgresConnector implements IConnector {
     }));
   }
 
-  async getIndexes(orm: IOrm, tableName: string): Promise<Index[]> {
-    const result = await orm.query<{ rows: PostgresIndex[]}>(`
+  async getIndexes(queryBuilder: IQueryBuilder, tableName: string): Promise<Index[]> {
+    const result = await queryBuilder.query<{ rows: PostgresIndex[]}>(`
       select
         indexname,
         tablename,
@@ -158,8 +158,8 @@ export class PostgresConnector implements IConnector {
     });
   }
 
-  async getTables(orm: IOrm): Promise<Table[]> {
-    const result = await orm.query<{ rows: PostgresTable[]}>(`
+  async getTables(queryBuilder: IQueryBuilder): Promise<Table[]> {
+    const result = await queryBuilder.query<{ rows: PostgresTable[]}>(`
       select 
         table_name,
         table_schema,
@@ -168,7 +168,7 @@ export class PostgresConnector implements IConnector {
       where 
         table_type = 'BASE TABLE'
         and table_schema = current_schema()
-        and table_name not like '${orm.getTablePrefix()}%'
+        and table_name not like '${queryBuilder.getTablePrefix()}%'
     `);
 
     return result.rows.map((t: PostgresTable) => ({
@@ -178,8 +178,8 @@ export class PostgresConnector implements IConnector {
     }));
   }
 
-  async tableExists(orm: IOrm, tableName: string): Promise<boolean> {
-    const result = await orm.query<{ rows: { cnt: number }[]}>(`
+  async tableExists(queryBuilder: IQueryBuilder, tableName: string): Promise<boolean> {
+    const result = await queryBuilder.query<{ rows: { cnt: number }[]}>(`
       select count(*) as cnt 
       from information_schema.tables
       where 
@@ -189,4 +189,3 @@ export class PostgresConnector implements IConnector {
     return result.rows[0].cnt > 0;
   }
 }
-

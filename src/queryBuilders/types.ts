@@ -47,7 +47,7 @@ export type SqliteConnectionConfig = {
   migrations: MigrationConfig;
 };
 
-export type OrmConfig = (
+export type QueryBuilderConfig = (
   MysqlConnectionConfig
   | PostgresConnectionConfig
   | SqliteConnectionConfig
@@ -58,7 +58,7 @@ export type Migration = {
   directory: string;
 };
 
-export enum OrmType {
+export enum QueryBuilderType {
   Knex = 'knex',
   Kysely = 'kysely',
 }

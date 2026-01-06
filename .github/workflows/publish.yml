@@ -27,8 +27,6 @@ jobs:
         with:
           node-version: '24.12.0'
           registry-url: 'https://registry.npmjs.org'
-      - name: Install
-        run: yarn
       - name: Publish
         run: |
           npm publish --access=public

@@ -18,11 +18,13 @@ This tool outputs Entity Relationship diagrams for Knex.js and Kysely migrations
 
 ## Usage
 
-### Installation
+Install the package:
 
 ```bash
 npm install -g migration-visualizer
 ```
+
+And then use it through the CLI.
 
 ### CLI
 

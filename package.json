@@ -29,6 +29,7 @@
   "keywords": [
     "database",
     "knex",
+    "kysely",
     "mermaid",
     "migrations",
     "mysql",
@@ -39,7 +40,6 @@
   ],
   "dependencies": {
     "commander": "^14.0.2",
-    "dedent": "^1.7.1",
     "knex": "^3.1.0",
     "lodash.partition": "^4.6.0"
   },

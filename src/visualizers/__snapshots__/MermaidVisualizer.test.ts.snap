@@ -4,32 +4,37 @@ exports[`MermaidVisualizer should generate mermaid diagram 1`] = `
 "---
 title: Database Schema
 ---
-%%{init: { 'theme': 'base', 'themeVariables': { 
-  'primaryColor': '#00ff00', 
-  'lineColor': '#0000ff',
-  'mainBkg': '#ffffff'
-} } }%%
+%%{
+    init: {
+        'theme': 'base',
+        'themeVariables': {
+            'primaryColor': '#00ff00',
+            'lineColor': '#0000ff',
+            'mainBkg': '#ffffff'
+        }
+    }
+}%%
+
 erDiagram
+    
     users {
         integer id PK ""
-    varchar(255) email  ""
-    varchar(100) username  ""
-    varchar(255) password_hash  "This cannot be the actual password"
-}
-posts {
-        integer id PK ""
-    varchar(255) title  ""
-    text content  ""
-}
-comments ||--o{ posts: -
+        varchar(255) email  ""
+        varchar(100) username  ""
+        varchar(255) password_hash  "This cannot be the actual password"
+    }
     
-
+    posts {
+        integer id PK ""
+        varchar(255) title  ""
+        text content  ""
+    }
+    comments ||--o{ posts: -
     comments ||--o{ users: -
-    
-comments {
+    comments {
         integer id PK ""
-    text text  ""
-    integer post_id FK ""
-    integer user_id FK ""
-}"
+        text text  ""
+        integer post_id FK ""
+        integer user_id FK ""
+    }"
 `;

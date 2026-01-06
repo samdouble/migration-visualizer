@@ -1,4 +1,4 @@
-import { IOrm } from '../orms/IOrm';
+import { IQueryBuilder } from '../queryBuilders/IQueryBuilder';
 import { IConnector } from './IConnector';
 import { Column, Ddl, ForeignKey, Index, Table } from './types';
 
@@ -37,8 +37,8 @@ export type MysqlIndex = {
 };
 
 export class MysqlConnector implements IConnector {
-  async getColumns(orm: IOrm, tableName: string): Promise<Column[]> {
-    const result = await orm.query<MysqlColumn[][]>(`
+  async getColumns(queryBuilder: IQueryBuilder, tableName: string): Promise<Column[]> {
+    const result = await queryBuilder.query<MysqlColumn[][]>(`
       select * from information_schema.columns 
       where
         table_name='${tableName}'
@@ -57,19 +57,19 @@ export class MysqlConnector implements IConnector {
     }));
   }
 
-  async getDdl(orm: IOrm, tableName: string): Promise<Ddl | null> {
-    const exists = await this.tableExists(orm, tableName);
+  async getDdl(queryBuilder: IQueryBuilder, tableName: string): Promise<Ddl | null> {
+    const exists = await this.tableExists(queryBuilder, tableName);
     if (!exists) {
       return null;
     }
-    const result = await orm.query<{ 'Create Table': string }[][]>(`
+    const result = await queryBuilder.query<{ 'Create Table': string }[][]>(`
       show create table ${tableName}
     `);
     return result[0][0]['Create Table'];
   }
 
-  async getForeignKeys(orm: IOrm, tableName: string): Promise<ForeignKey[]> {
-    const result = await orm.query<MysqlForeignKey[][]>(`
+  async getForeignKeys(queryBuilder: IQueryBuilder, tableName: string): Promise<ForeignKey[]> {
+    const result = await queryBuilder.query<MysqlForeignKey[][]>(`
       select
         kcu.CONSTRAINT_NAME,
         kcu.TABLE_NAME,
@@ -98,8 +98,8 @@ export class MysqlConnector implements IConnector {
     }));
   }
 
-  async getIndexes(orm: IOrm, tableName: string): Promise<Index[]> {
-    const result = await orm.query<MysqlIndex[][]>(`
+  async getIndexes(queryBuilder: IQueryBuilder, tableName: string): Promise<Index[]> {
+    const result = await queryBuilder.query<MysqlIndex[][]>(`
       select * from information_schema.statistics
       where
         table_name = '${tableName}'
@@ -113,13 +113,13 @@ export class MysqlConnector implements IConnector {
     }));
   }
 
-  async getTables(orm: IOrm): Promise<Table[]> {
-    const result = await orm.query<MysqlTable[][]>(`
+  async getTables(queryBuilder: IQueryBuilder): Promise<Table[]> {
+    const result = await queryBuilder.query<MysqlTable[][]>(`
       select * from information_schema.tables
       where
         table_type = 'BASE TABLE'
         and table_schema = database()
-        and table_name not like '${orm.getTablePrefix()}%'
+        and table_name not like '${queryBuilder.getTablePrefix()}%'
     `);
     return result[0].map((t: MysqlTable) => ({
       name: t['TABLE_NAME'],
@@ -128,8 +128,8 @@ export class MysqlConnector implements IConnector {
     }));
   }
 
-  async tableExists(orm: IOrm, tableName: string): Promise<boolean> {
-    const result = await orm.query<{ cnt: number }[][]>(`
+  async tableExists(queryBuilder: IQueryBuilder, tableName: string): Promise<boolean> {
+    const result = await queryBuilder.query<{ cnt: number }[][]>(`
       select count(*) as cnt from information_schema.tables
       where
         table_name = '${tableName}'

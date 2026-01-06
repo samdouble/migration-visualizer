@@ -3,23 +3,23 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { ConnectorFactory } from '../connectors/ConnectorFactory';
 import { State } from '../connectors/types';
-import { IOrm } from './IOrm';
-import { Migration, OrmConfig } from './types';
+import { IQueryBuilder } from './IQueryBuilder';
+import { Migration, QueryBuilderConfig } from './types';
 
-export class KnexOrm implements IOrm {
+export class KnexQueryBuilder implements IQueryBuilder {
   private db: Knex | null = null;
 
   constructor() {
     this.db = null;
   }
 
-  async initialize(providedConfig?: OrmConfig): Promise<void> {
+  async initialize(providedConfig?: QueryBuilderConfig): Promise<void> {
     if (this.db) {
       return;
     }
     let config = providedConfig as Knex.Config | undefined;
     if (!config) {
-      const configFilePath = KnexOrm.getConfigFile();
+      const configFilePath = KnexQueryBuilder.getConfigFile();
       if (!configFilePath) {
         throw new Error('Knexfile not found');
       }

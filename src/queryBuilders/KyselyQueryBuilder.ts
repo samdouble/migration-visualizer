@@ -15,18 +15,18 @@ import path from 'node:path';
 import { Pool as PostgresPool } from 'pg';
 import { ConnectorFactory } from '../connectors/ConnectorFactory';
 import { EngineType, State } from '../connectors/types';
-import { IOrm } from './IOrm';
+import { IQueryBuilder } from './IQueryBuilder';
 import {
   DialectType,
   Migration,
   MysqlConnectionConfig,
-  OrmConfig,
   PostgresConnectionConfig,
+  QueryBuilderConfig,
   SqliteConnectionConfig,
 } from './types';
 import { getEngineFromDialect } from './utils';
 
-export class KyselyOrm implements IOrm {
+export class KyselyQueryBuilder implements IQueryBuilder {
   private db: Kysely<unknown> | null = null;
   private dialect: DialectType | null = null;
   private migrator: Migrator | null = null;
@@ -39,7 +39,7 @@ export class KyselyOrm implements IOrm {
     this.migrationsDir = null;
   }
 
-  async initialize(providedConfig?: OrmConfig): Promise<void> {
+  async initialize(providedConfig?: QueryBuilderConfig): Promise<void> {
     if (this.db) {
       return;
     }
@@ -190,7 +190,7 @@ export class KyselyOrm implements IOrm {
       await this.initialize();
     }
     const result = await sql.raw(queryStr).execute(this.db!);
-    // TODO: Ideally the Kysely ORM would be perfectly decoupled
+    // TODO: Ideally the Kysely Query Builder would be perfectly decoupled
     // from the database type
     const engine = getEngineFromDialect(this.dialect!);
     if (engine === EngineType.Mysql) {

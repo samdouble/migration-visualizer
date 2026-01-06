@@ -1,8 +1,8 @@
 import { MySQLDB } from 'mysql-memory-server/dist/types';
 import { runConnectorTests } from '../../tests/connectorTests';
 import { dbConnect, dbDisconnect } from '../../tests/mysql';
-import { KnexOrm } from '../orms/KnexOrm';
-import { KyselyOrm } from '../orms/KyselyOrm';
+import { KnexQueryBuilder } from '../queryBuilders/KnexQueryBuilder';
+import { KyselyQueryBuilder } from '../queryBuilders/KyselyQueryBuilder';
 import { MysqlConnector } from './MysqlConnector';
 
 let db: MySQLDB;
@@ -20,8 +20,8 @@ runConnectorTests(
   'Knex',
   'MySQL',
   async () => {
-    const orm = new KnexOrm();
-    await orm.initialize({
+    const queryBuilder = new KnexQueryBuilder();
+    await queryBuilder.initialize({
       client: 'mysql2',
       connection: {
         host: '127.0.0.1',
@@ -35,13 +35,13 @@ runConnectorTests(
         extension: 'ts',
       },
     });
-    await orm.migrateLatest();
+    await queryBuilder.migrateLatest();
     const connector = new MysqlConnector();
-    return { orm, connector };
+    return { queryBuilder, connector };
   },
-  async (orm) => {
-    await orm.rollbackAll();
-    await orm.close();
+  async (queryBuilder) => {
+    await queryBuilder.rollbackAll();
+    await queryBuilder.close();
   },
 );
 
@@ -49,8 +49,8 @@ runConnectorTests(
   'Kysely',
   'MySQL',
   async () => {
-    const orm = new KyselyOrm();
-    await orm.initialize({
+    const queryBuilder = new KyselyQueryBuilder();
+    await queryBuilder.initialize({
       client: 'mysql2',
       connection: {
         host: '127.0.0.1',
@@ -64,12 +64,12 @@ runConnectorTests(
         extension: 'ts',
       },
     });
-    await orm.migrateLatest();
+    await queryBuilder.migrateLatest();
     const connector = new MysqlConnector();
-    return { orm, connector };
+    return { queryBuilder, connector };
   },
-  async (orm) => {
-    await orm.rollbackAll();
-    await orm.close();
+  async (queryBuilder) => {
+    await queryBuilder.rollbackAll();
+    await queryBuilder.close();
   },
 );

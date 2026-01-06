@@ -1,11 +1,11 @@
 import { State } from "../connectors/types";
-import { Migration, OrmConfig } from "./types";
+import { Migration, QueryBuilderConfig } from "./types";
 
-export interface IOrm {
+export interface IQueryBuilder {
   getMigrations: () => Promise<{ completed: Migration[], pending: Migration[] }>;
   getState: () => Promise<State>;
   getTablePrefix(): string;
-  initialize: (providedConfig?: OrmConfig) => Promise<void>;
+  initialize: (providedConfig?: QueryBuilderConfig) => Promise<void>;
   migrateLatest: () => Promise<void>;
   migrateUp: (file: string) => Promise<void>;
   rollbackAll: () => Promise<void>;

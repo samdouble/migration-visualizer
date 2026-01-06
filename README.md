@@ -36,7 +36,7 @@ npx migration-visualizer visualize [options]
 
 | Option | Description | Required |
 |--------|-------------|----------|
-| `--orm <orm>` | ORM to use (`knex`, `kysely`) | Yes |
+| `--query-builder <query-builder>` | Query builder to use (`knex`, `kysely`) | Yes |
 | `--changed <files...>` | List of new and updated migration files | No |
 | `--output <format>` | Output format (default: `mermaid`) | No |
 
@@ -61,7 +61,7 @@ npx migration-visualizer visualize [options]
 `migration-visualizer` detects the Knexfile at the root of your project and uses it for configuration.
 
 ```bash
-npx migration-visualizer visualize --orm knex --changed 20251227000006_create_likes.ts
+npx migration-visualizer visualize --query-builder knex --changed 20251227000006_create_likes.ts
 ```
 
 ##### Kysely
@@ -72,7 +72,7 @@ Since Kysely does not provide a configuration file, you need to provide the dial
 
 ```bash
 npx migration-visualizer visualize \
-  --orm kysely \
+  --query-builder kysely \
   --dialect mysql2 \
   --host localhost \
   --port 3306 \
@@ -87,7 +87,7 @@ npx migration-visualizer visualize \
 
 ```bash
 npx migration-visualizer visualize \
-  --orm kysely \
+  --query-builder kysely \
   --dialect pg \
   --host localhost \
   --port 5432 \
@@ -101,7 +101,7 @@ npx migration-visualizer visualize \
 
 ```bash
 npx migration-visualizer visualize \
-  --orm kysely \
+  --query-builder kysely \
   --dialect sqlite3 \
   --filename dev.sqlite3 \
   --migrations ./migrations \
@@ -114,7 +114,7 @@ TODO
 
 ## Features
 
-### Supported ORMs
+### Supported Query Builders
 
 - Knex.js
 - Kysely

@@ -41,6 +41,7 @@
   "dependencies": {
     "commander": "^14.0.2",
     "knex": "^3.1.0",
+    "lodash.isequal": "^4.5.0",
     "lodash.partition": "^4.6.0"
   },
   "devDependencies": {
@@ -48,6 +49,7 @@
     "@stylistic/eslint-plugin": "^5.6.1",
     "@types/better-sqlite3": "^7.6.12",
     "@types/jest": "^30.0.0",
+    "@types/lodash.isequal": "^4.5.8",
     "@types/lodash.partition": "^4.6.9",
     "@types/pg": "^8.16.0",
     "better-sqlite3": "^12.5.0",

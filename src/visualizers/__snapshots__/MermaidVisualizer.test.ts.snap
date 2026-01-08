@@ -8,8 +8,8 @@ title: Database Schema
     init: {
         'theme': 'base',
         'themeVariables': {
-            'primaryColor': '#00ff00',
-            'lineColor': '#0000ff',
+            'primaryColor': '#ffffff',
+            'lineColor': '#000000',
             'mainBkg': '#ffffff'
         }
     }
@@ -31,6 +31,7 @@ erDiagram
     }
     comments ||--o{ posts: -
     comments ||--o{ users: -
+    style comments fill:palegreen,stroke:palegreen,stroke-width:4px
     comments {
         integer id PK ""
         text text  ""

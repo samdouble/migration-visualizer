@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`JsonVisualizer should generate mermaid diagram 1`] = `"{"newTables":[{"name":"comments","schema":"public","database":"test"}],"updatedTables":[],"deletedTables":[]}"`;

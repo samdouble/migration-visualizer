@@ -1,8 +1,8 @@
 import { Column, ForeignKey, Index, Table } from '../connectors/types';
-import { MermaidVisualizer } from '../visualizers/MermaidVisualizer';
+import { JsonVisualizer } from '../visualizers/JsonVisualizer';
 
-describe('MermaidVisualizer', () => {
-  const visualizer = new MermaidVisualizer();
+describe('JsonVisualizer', () => {
+  const visualizer = new JsonVisualizer();
 
   const beforeTables: Table[] = [
     { name: 'users', schema: 'public', database: 'test' },

@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.0.0](https://github.com/samdouble/migration-visualizer/compare/v0.4.0...v1.0.0) (2026-01-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* rename --orm option with --query-builder
+
+### Features
+
+* **mermaid:** show added tables with colors ([061b39b](https://github.com/samdouble/migration-visualizer/commit/061b39b60743252801fc4dd649f8a3376c0a6301))
+* rename --orm option with --query-builder ([a2535e6](https://github.com/samdouble/migration-visualizer/commit/a2535e6b22c064791a11ce3958789f4c704ebb15))
+
+
+### Bug Fixes
+
+* **mermaid:** improve indentation ([62f4e5e](https://github.com/samdouble/migration-visualizer/commit/62f4e5e249e89f6195eaefed312a174c60d9d636))
+
 ## [0.4.0](https://github.com/samdouble/migration-visualizer/compare/v0.3.0...v0.4.0) (2026-01-02)
 
 
